@@ -1,0 +1,38 @@
+[package]
+name = "palinurus-core"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Palinurus — minimal wasm32-wasip2-friendly Solana substrate for ZeroClaw WIT tool plugins. PDA derivation, base58, borsh, versioned-tx, durable-nonce, response shaping. Track C (DePIN) core."
+publish = false
+# Standalone crate: built for both host (cargo test) and wasm32-wasip2 (the
+# plugins import this as a crates.io dependency and compile it into the
+# component). solana-sdk/solana-program cannot be used inside a WIT component
+# — this crate hand-rolls the minimal primitives instead.
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+# Pure-Rust, wasm32-wasip2-friendly primitives only.
+# curve25519-dalek: off-curve check for PDA derivation (replaces solana_program::Pubkey).
+# sha2: SHA-256 for PDA hashing + general hashing.
+# bs58: base58 encode/decode for Solana addresses.
+# borsh: Borsh serialization for Solana instruction data + account data.
+curve25519-dalek = "4"
+sha2 = "0.10"
+bs58 = "0.5"
+borsh = "1"
+
+[dev-dependencies]
+# Host-only oracle for the PDA cross-check: `solana_program::Pubkey::find_program_address`
+# is the consensus-critical on-chain derivation. It is NOT compiled into the
+# wasm component (dev-dependency, host tests only) — it exists purely to prove
+# our hand-rolled `find_program_address` matches the canonical reference byte-for-byte.
+solana-program = "2"
+
+[profile.release]
+opt-level = "s"
+lto = true
+strip = true
+codegen-units = 1

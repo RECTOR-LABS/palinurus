@@ -1,0 +1,22 @@
+# Rust build artifacts
+/target
+
+# WASM component outputs (never committed; published via the registry)
+*.wasm
+*.cwasm
+
+# Marketing site + dev tools (Next.js / Node)
+node_modules/
+/site/.next
+/site/out
+/site/.env*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Secrets
+.env
+.env.*

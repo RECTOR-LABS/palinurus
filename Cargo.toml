@@ -4,7 +4,11 @@ version = "0.1.0"
 edition = "2021"
 license = "MIT"
 description = "Palinurus — minimal wasm32-wasip2-friendly Solana substrate for ZeroClaw WIT tool plugins. PDA derivation, base58, borsh, versioned-tx, durable-nonce, response shaping. Track C (DePIN) core."
-publish = false
+publish = true
+repository = "https://github.com/RECTOR-LABS/palinurus"
+homepage = "https://github.com/RECTOR-LABS/palinurus"
+keywords = ["solana", "wasm", "wasi", "wasm32-wasip2", "depin"]
+categories = ["cryptography::cryptocurrencies", "wasm"]
 # Standalone crate: built for both host (cargo test) and wasm32-wasip2 (the
 # plugins import this as a crates.io dependency and compile it into the
 # component). solana-sdk/solana-program cannot be used inside a WIT component

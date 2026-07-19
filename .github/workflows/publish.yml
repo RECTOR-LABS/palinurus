@@ -1,0 +1,79 @@
+# Publish palinurus-core to crates.io.
+#
+# Triggers:
+#   - Auto: push a `v*` tag (e.g. v0.1.0) after bumping Cargo.toml version.
+#   - Manual: Actions tab → "Run workflow" — used for the first publish of a
+#     new crate (tag already on remote won't retro-fire) or to retry.
+#     `dry_run` defaults to safe (verify-only).
+#
+# Gates run before publish: host tests + wasm32-wasip2 build + clippy -D warnings.
+# Idempotent: skips if the version already exists on crates.io.
+#
+# Required secret: CRATES_IO_TOKEN (crates.io API token).
+# First publish needs publish-new + publish-update scope (all crates).
+# After v0.1.0 lands, rotate to publish-update only, scoped to palinurus-core.
+name: publish
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry-run (verify, don't publish)"
+        required: false
+        default: "true"
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+          targets: wasm32-wasip2
+
+      - uses: Swatinem/rust-cache@v2
+
+      # Gates — never publish from a red build.
+      - name: Test (host)
+        run: cargo test --all-targets
+      - name: Build (wasm32-wasip2, release)
+        run: cargo build --target wasm32-wasip2 --release
+      - name: Clippy (deny warnings)
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Resolve crate name + version
+        id: meta
+        run: |
+          META="$(cargo metadata --no-deps --format-version 1)"
+          echo "name=$(printf '%s' "$META" | jq -r '.packages[0].name')"     >> "$GITHUB_OUTPUT"
+          echo "version=$(printf '%s' "$META" | jq -r '.packages[0].version')" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if already published (idempotency)
+        id: exists
+        run: |
+          if curl -sf "https://crates.io/api/v1/crates/${{ steps.meta.outputs.name }}/${{ steps.meta.outputs.version }}" >/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::${{ steps.meta.outputs.name }} ${{ steps.meta.outputs.version }} already on crates.io — skipping."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to crates.io
+        if: steps.exists.outputs.exists != 'true' && github.event.inputs.dry_run != 'true'
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+        run: cargo publish
+
+      - name: Publish (dry-run)
+        if: steps.exists.outputs.exists != 'true' && github.event.inputs.dry_run == 'true'
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+        run: cargo publish --dry-run

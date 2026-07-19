@@ -12,5 +12,9 @@
   "type": "commonjs",
   "dependencies": {
     "@solana/web3.js": "^1.98.4"
+  },
+  "devDependencies": {
+    "@solana/spl-memo": "^0.2.5",
+    "sas-lib": "^1.0.10"
   }
 }

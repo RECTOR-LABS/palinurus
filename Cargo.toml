@@ -22,7 +22,7 @@ crate-type = ["rlib"]
 curve25519-dalek = "4"
 sha2 = "0.10"
 bs58 = "0.5"
-borsh = "1"
+borsh = { version = "1", features = ["derive"] }
 
 [dev-dependencies]
 # Host-only oracle for the PDA cross-check: `solana_program::Pubkey::find_program_address`

@@ -13,8 +13,10 @@
 use std::fmt;
 use std::str::FromStr;
 
+use borsh::{BorshDeserialize, BorshSerialize};
+
 /// A Solana public key / program id / PDA — 32 bytes, base58-encoded on the wire.
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, BorshSerialize, BorshDeserialize)]
 pub struct Pubkey([u8; 32]);
 
 /// Errors from base58 decoding a string into a [`Pubkey`].

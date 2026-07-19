@@ -36,11 +36,9 @@
 //! spike for that: if `curve25519-dalek` + `sha2` compile to `wasm32-wasip2` and
 //! the derivation matches the reference algorithm, SAS-primary is confirmed.
 
+use crate::base58::Pubkey;
 use curve25519_dalek::edwards::CompressedEdwardsY;
 use sha2::{Digest, Sha256};
-
-/// A Solana public key / PDA is 32 bytes.
-pub type PubkeyBytes = [u8; 32];
 
 /// Domain-separation marker appended to every PDA derivation hash, matching
 /// `solana_program::pubkey::PDA_MARKER` (v1.18 classic and v2.x both use it).
@@ -49,13 +47,13 @@ pub type PubkeyBytes = [u8; 32];
 /// last seed (tried 255 → 1) and the marker follows the program id.
 const PDA_MARKER: &[u8; 21] = b"ProgramDerivedAddress";
 
-/// Returns `true` if `bytes` are a valid ed25519 compressed point (on-curve).
+/// Returns `true` if `pk` is a valid ed25519 compressed point (on-curve).
 ///
 /// A PDA must be **off-curve** (`is_on_curve == false`) so it has no associated
 /// private key. This mirrors `solana_program::Pubkey::is_on_curve`, which uses
 /// `curve25519_dalek::edwards::CompressedEdwardsY::decompress`.
-pub fn is_on_curve(bytes: &PubkeyBytes) -> bool {
-    CompressedEdwardsY(*bytes).decompress().is_some()
+pub fn is_on_curve(pk: &Pubkey) -> bool {
+    CompressedEdwardsY(*pk.as_bytes()).decompress().is_some()
 }
 
 /// Derive the canonical (highest-bump) PDA for `seeds` under `program_id`.
@@ -64,23 +62,25 @@ pub fn is_on_curve(bytes: &PubkeyBytes) -> bool {
 /// as the last seed, then the program id and `PDA_MARKER` follow; bump seeds are
 /// tried 255 → 1 (descending) and the first (highest) off-curve hash wins.
 ///
-/// Returns `(pda_bytes, bump_seed)`. Panics only if no off-curve hash is found
-/// across 255 bumps — practically unreachable (~0.5^255 probability).
-pub fn find_program_address(seeds: &[&[u8]], program_id: &PubkeyBytes) -> (PubkeyBytes, u8) {
+/// Returns `(pda, bump_seed)`. Panics only if no off-curve hash is found across
+/// 255 bumps — practically unreachable (~0.5^255 probability).
+pub fn find_program_address(seeds: &[&[u8]], program_id: &Pubkey) -> (Pubkey, u8) {
     // Matches solana_program::Pubkey::try_find_program_address: bump is the
     // last seed, then program_id, then the PDA_MARKER domain separator. Bump
     // tries 255 → 1 (solana's loop is `0..u8::MAX` starting at u8::MAX).
+    let program_bytes = program_id.as_bytes();
     for bump in (1u8..=255).rev() {
         let mut hasher = Sha256::new();
         for seed in seeds {
             hasher.update(seed);
         }
         hasher.update([bump]);
-        hasher.update(program_id);
+        hasher.update(program_bytes);
         hasher.update(PDA_MARKER);
-        let hash: PubkeyBytes = hasher.finalize().into();
-        if !is_on_curve(&hash) {
-            return (hash, bump);
+        let hash: [u8; 32] = hasher.finalize().into();
+        let pda = Pubkey::from_bytes(hash);
+        if !is_on_curve(&pda) {
+            return (pda, bump);
         }
     }
     // See crate docs: ~50% of hashes are off-curve, so this is unreachable.
@@ -95,39 +95,37 @@ mod solana_oracle {
     /// this byte-for-byte, it produces real on-chain-valid PDAs.
     #[test]
     fn matches_canonical_solana_program_derivation_two_seeds() {
-        let program_id = solana_program::pubkey::Pubkey::new_from_array([0x42u8; 32]);
+        let program_id = Pubkey::from_bytes([0x42u8; 32]);
         let seeds: &[&[u8]] = &[b"palinurus", b"depin-attest"];
 
         let (ref_pda, ref_bump) =
-            solana_program::pubkey::Pubkey::find_program_address(seeds, &program_id);
+            solana_program::pubkey::Pubkey::find_program_address(seeds, &solana_program::pubkey::Pubkey::new_from_array(program_id.to_bytes()));
         let ref_b58 = bs58::encode(ref_pda.to_bytes()).into_string();
 
-        let (my_pda, my_bump) = find_program_address(seeds, &program_id.to_bytes());
-        let my_b58 = bs58::encode(my_pda).into_string();
+        let (my_pda, my_bump) = find_program_address(seeds, &program_id);
 
         eprintln!(
-            "[oracle] solana-program ref: {ref_b58} bump {ref_bump} | ours: {my_b58} bump {my_bump}"
+            "[oracle] solana-program ref: {ref_b58} bump {ref_bump} | ours: {my_pda} bump {my_bump}"
         );
-        assert_eq!(my_b58, ref_b58, "PDA must match canonical solana-program derivation");
+        assert_eq!(my_pda.to_bytes(), ref_pda.to_bytes(), "PDA must match canonical solana-program derivation");
         assert_eq!(my_bump, ref_bump, "bump must match canonical solana-program derivation");
     }
 
     #[test]
     fn matches_canonical_solana_program_derivation_single_seed() {
-        let program_id = solana_program::pubkey::Pubkey::new_from_array([0x42u8; 32]);
+        let program_id = Pubkey::from_bytes([0x42u8; 32]);
         let seeds: &[&[u8]] = &[b"palinurus"];
 
         let (ref_pda, ref_bump) =
-            solana_program::pubkey::Pubkey::find_program_address(seeds, &program_id);
+            solana_program::pubkey::Pubkey::find_program_address(seeds, &solana_program::pubkey::Pubkey::new_from_array(program_id.to_bytes()));
         let ref_b58 = bs58::encode(ref_pda.to_bytes()).into_string();
 
-        let (my_pda, my_bump) = find_program_address(seeds, &program_id.to_bytes());
-        let my_b58 = bs58::encode(my_pda).into_string();
+        let (my_pda, my_bump) = find_program_address(seeds, &program_id);
 
         eprintln!(
-            "[oracle] solana-program ref: {ref_b58} bump {ref_bump} | ours: {my_b58} bump {my_bump}"
+            "[oracle] solana-program ref: {ref_b58} bump {ref_bump} | ours: {my_pda} bump {my_bump}"
         );
-        assert_eq!(my_b58, ref_b58, "PDA must match canonical solana-program derivation");
+        assert_eq!(my_pda.to_bytes(), ref_pda.to_bytes(), "PDA must match canonical solana-program derivation");
         assert_eq!(my_bump, ref_bump, "bump must match canonical solana-program derivation");
     }
 }
@@ -136,10 +134,11 @@ mod solana_oracle {
 mod tests {
     use super::*;
 
-    /// A fixed, arbitrary program id (32 × 0x42) used across the property tests.
-    /// Its base58 form is computed in the cross-check test below.
-    fn test_program_id() -> PubkeyBytes {
-        [0x42; 32]
+    /// A fixed, arbitrary program id (32 × 0x42, base58
+    /// `5TeWSsjg2gbxCyWVniXeCmwM7UtHTCK7svzJr5xYJzHf`) used across the property
+    /// tests. Its base58 form is cross-checked in the web3.js reference test below.
+    fn test_program_id() -> Pubkey {
+        Pubkey::from_bytes([0x42; 32])
     }
 
     #[test]
@@ -172,8 +171,8 @@ mod tests {
     #[test]
     fn different_programs_yield_different_pdas() {
         let seeds: &[&[u8]] = &[b"palinurus"];
-        let prog_a = [0x42; 32];
-        let prog_b = [0x43; 32];
+        let prog_a = Pubkey::from_bytes([0x42; 32]);
+        let prog_b = Pubkey::from_bytes([0x43; 32]);
         let (pda_a, _) = find_program_address(seeds, &prog_a);
         let (pda_b, _) = find_program_address(seeds, &prog_b);
         assert_ne!(
@@ -189,6 +188,7 @@ mod tests {
         // on-curve (otherwise that higher bump would have been returned), and the
         // returned bump's hash equals the PDA.
         let program_id = test_program_id();
+        let program_bytes = program_id.as_bytes();
         let (pda, bump) = find_program_address(&[b"palinurus"], &program_id);
 
         for higher_u16 in ((bump as u16) + 1)..=255u16 {
@@ -196,11 +196,12 @@ mod tests {
             let mut hasher = Sha256::new();
             hasher.update(b"palinurus");
             hasher.update([higher]);
-            hasher.update(program_id);
+            hasher.update(program_bytes);
             hasher.update(PDA_MARKER);
-            let h: PubkeyBytes = hasher.finalize().into();
+            let h: [u8; 32] = hasher.finalize().into();
+            let h_pk = Pubkey::from_bytes(h);
             assert!(
-                is_on_curve(&h),
+                is_on_curve(&h_pk),
                 "bump {higher} is higher than returned bump {bump} but is off-curve — search order is wrong"
             );
         }
@@ -209,10 +210,10 @@ mod tests {
         let mut hasher = Sha256::new();
         hasher.update(b"palinurus");
         hasher.update([bump]);
-        hasher.update(program_id);
+        hasher.update(program_bytes);
         hasher.update(PDA_MARKER);
-        let h: PubkeyBytes = hasher.finalize().into();
-        assert_eq!(pda, h, "PDA must equal sha256(seeds || bump || program || PDA_MARKER)");
+        let h: [u8; 32] = hasher.finalize().into();
+        assert_eq!(pda.to_bytes(), h, "PDA must equal sha256(seeds || bump || program || PDA_MARKER)");
     }
 
     #[test]
@@ -240,8 +241,7 @@ mod tests {
 
         let program_id = test_program_id();
         let (pda, bump) = find_program_address(&[b"palinurus", b"depin-attest"], &program_id);
-        let got_b58 = bs58::encode(pda).into_string();
-        assert_eq!(got_b58, expected_pda_b58, "PDA base58 must match @solana/web3.js reference");
+        assert_eq!(pda.to_string(), expected_pda_b58, "PDA base58 must match @solana/web3.js reference");
         assert_eq!(bump, expected_bump, "bump must match @solana/web3.js reference");
     }
 
@@ -254,8 +254,7 @@ mod tests {
 
         let program_id = test_program_id();
         let (pda, bump) = find_program_address(&[b"palinurus"], &program_id);
-        let got_b58 = bs58::encode(pda).into_string();
-        assert_eq!(got_b58, expected_pda_b58, "PDA base58 must match @solana/web3.js reference");
+        assert_eq!(pda.to_string(), expected_pda_b58, "PDA base58 must match @solana/web3.js reference");
         assert_eq!(bump, expected_bump, "bump must match @solana/web3.js reference");
     }
 }

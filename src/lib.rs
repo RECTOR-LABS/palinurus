@@ -14,6 +14,8 @@
 //!     versioned-tx construction, durable-nonce handling, RPC over the host's
 //!     `wasi:http`, response shaping to ~200 tokens).
 
+pub mod base58;
 pub mod pda;
 
-pub use pda::{find_program_address, is_on_curve, PubkeyBytes};
+pub use base58::Pubkey;
+pub use pda::{find_program_address, is_on_curve};

@@ -19,10 +19,19 @@ crate-type = ["rlib"]
 # sha2: SHA-256 for PDA hashing + general hashing.
 # bs58: base58 encode/decode for Solana addresses.
 # borsh: Borsh serialization for Solana instruction data + account data.
+# serde / serde_json: JSON for the JSON-RPC 2.0 client (rpc module).
+# base64: base64 encode/decode for Solana RPC account data + sendTransaction.
+# waki: blocking wasi:http client (the host grants `http_client`; TLS host-side).
+#       Only functional inside a wasm32-wasip2 component with wasi:http; on host
+#       it compiles but transport calls require a wasi:http runtime.
 curve25519-dalek = "4"
 sha2 = "0.10"
 bs58 = "0.5"
 borsh = { version = "1", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+base64 = "0.22"
+waki = { version = "0.5", features = ["json"] }
 
 [dev-dependencies]
 # Host-only oracle for the PDA + versioned-tx cross-checks: `solana_program`'s

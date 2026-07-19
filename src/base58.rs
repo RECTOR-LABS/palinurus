@@ -19,6 +19,18 @@ use borsh::{BorshDeserialize, BorshSerialize};
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, BorshSerialize, BorshDeserialize)]
 pub struct Pubkey([u8; 32]);
 
+impl fmt::Display for Base58Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Empty => f.write_str("empty base58 string"),
+            Self::InvalidChar => f.write_str("invalid base58 character"),
+            Self::InvalidLength => f.write_str("base58 decoded to a length other than 32 bytes"),
+        }
+    }
+}
+
+impl std::error::Error for Base58Error {}
+
 /// Errors from base58 decoding a string into a [`Pubkey`].
 #[derive(Debug, PartialEq, Eq)]
 pub enum Base58Error {

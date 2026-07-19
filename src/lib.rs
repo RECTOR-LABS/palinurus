@@ -17,7 +17,9 @@
 pub mod base58;
 pub mod borsh;
 pub mod pda;
+pub mod versioned_tx;
 
 pub use base58::Pubkey;
 pub use borsh::{memo_ix_data, CreateAttestationIxData};
 pub use pda::{find_program_address, is_on_curve};
+pub use versioned_tx::{build_unsigned, serialize as serialize_tx, AccountMeta, Instruction, MessageHeader, MessageV0, VersionedTransaction};

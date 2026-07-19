@@ -25,11 +25,11 @@ bs58 = "0.5"
 borsh = { version = "1", features = ["derive"] }
 
 [dev-dependencies]
-# Host-only oracle for the PDA cross-check: `solana_program::Pubkey::find_program_address`
-# is the consensus-critical on-chain derivation. It is NOT compiled into the
-# wasm component (dev-dependency, host tests only) — it exists purely to prove
-# our hand-rolled `find_program_address` matches the canonical reference byte-for-byte.
+# Host-only oracle for the PDA + versioned-tx cross-checks: `solana_program`'s
+# consensus-critical implementations are the ground truth. They are NOT compiled
+# into the wasm component (dev-dependency, host tests only).
 solana-program = "2"
+bincode = "1"
 
 [profile.release]
 opt-level = "s"

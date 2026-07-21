@@ -98,17 +98,28 @@ laptop demo we don't boot the full ZeroClaw runtime on camera — instead a
 and the real Solana RPC. This is not a mock — it exercises the shipped
 code path against live services.
 
-> CIPHER will write `tools/demo/` (a small `[[bin]]` in the depin-rewards
-> crate, behind a `demo` feature) before recording starts. It will:
-> 1. `do_status` on Capybara → print the offline status line.
-> 2. `do_summary` on Capybara (30d window) → print the 0.02 HNT summary.
-> 3. `do_watch` on Capybara with `prev_active=true` → fire the real
->    Telegram OFFLINE alert (this is the on-camera phone ping).
-> 4. (attest beat) `execute_t1` on a simulated reading → print the
->    unsigned tx + attestation PDA + explorer URL.
+> **BUILT + LIVE-VERIFIED (2026-07-21).** Two drivers (the plugins are
+> standalone `[workspace]` crates, so each carries its own driver behind a
+> `demo` feature, off by default):
 >
-> **Build it once, verify it once, then record.** The driver is the only
-> "demo-only" code; all the logic is the shipped, tested plugin core.
+> **Rewards (chunks 2-5)** — `plugins/depin-rewards`:
+>   `cargo run --features demo --bin palinurus-demo -- <status|summary|watch|custody|all>`
+>   `ReqwestHttp` (impl of the core `HttpClient` trait, TDD'd w/ mockito) drives
+>   `do_status`/`do_summary`/`do_watch`. `watch` fires the real Telegram alert;
+>   the rest are Telegram-free (safe to smoke). Live-verified: `earned 0.02 HNT`.
+>
+> **Attest (chunk 6)** — `plugins/depin-attest`:
+>   `cargo run --features demo --bin depin-attest-demo`
+>   `ReqwestRpc` (impl of `palinurus_core::Rpc`, TDD'd w/ mockito) reads the
+>   live devnet durable-nonce account; `execute_t1` builds the real unsigned
+>   durable-nonce tx + attestation PDA + explorer link + full base64 tx
+>   (pastable into the explorer tx inspector). Config defaults to the devnet
+>   artifacts provisioned 2026-07-21 (credential `feWL…` + nonce `9Kaivz…`,
+>   authority = shared devnet wallet); env-overridable. No secrets (T1 unsigned).
+>   Live-verified: real attestation PDA `52QV…D3uW` + real unsigned durable-nonce tx.
+>
+> The drivers are the only demo-only code; all logic is the shipped, tested
+> plugin core (194 host tests now: 71 core + 68 attest + 49 rewards + 6 demo).
 
 ---
 
@@ -125,7 +136,7 @@ that chunk only.** Keep each clip as a separate file
 | 3 | **summary — 0.02 HNT earned** | ~25s | Run the driver's summary step (30d window). Terminal prints the rewards line + breakdown + owner. | Total reads `0.02 HNT` (≈0.02059069); `beacon` + `witness` non-zero; `owner` short-address shown. |
 | 4 | **watch → the Telegram alert (MONEY SHOT)** | ~25s | Run the driver's watch step (`prev_active=true`). Terminal prints "alert(s) sent: offline-alert". Cut to phone: the real Telegram notification drops in. | **Phone actually receives the Telegram message** with the hotspot name + "went OFFLINE". This is the beat — if the phone doesn't ping, re-record. |
 | 5 | **custody one-liner** | ~10s | Terminal: `cargo test no_signing_capability_in_crate` (or show the README custody table). Voiceover: "the plugin holds no key of any kind." | Test passes / table legible. |
-| 6 | **depin-attest — simulated reading → real Solana tx** | ~35s | Run the driver's attest step with a fake reading (`temp=24.3°C`). Terminal prints the attestation PDA + explorer URL. Paste the PDA into the devnet explorer (already open). | Explorer resolves the PDA (account exists or shows the create_attestation ix in the unsigned tx preview). The reading is fake; the Solana artifacts are real. |
+| 6 | **depin-attest — simulated reading → real Solana tx** | ~35s | `cd plugins/depin-attest && cargo run --features demo --bin depin-attest-demo`. Terminal prints the attestation PDA + explorer URL + the full unsigned durable-nonce tx (base64). Paste the tx into the explorer's tx inspector; paste the PDA into the address bar. | Explorer tx inspector shows the real `create_attestation` ix (program SAS, accounts, data). The PDA is recomputable from the reading. The reading is fake; the Solana artifacts are 100% real. |
 | 7 | **close + CTA** | ~15s | Terminal: PR link `github.com/zeroclaw-labs/zeroclaw-plugins/pull/76` + `palinurus.rectorspace.com`. Voiceover sign-off. | Links legible; hold for 2s. |
 
 **Total target: ~2:50.** Leaves a 10s buffer under the 3:00 hard cap.
@@ -253,7 +264,7 @@ use it as the demo video URL on the Superteam Earn submission form.
 
 - [x] Wiring diagram SVG (`docs/wiring-diagram.svg`) — done.
 - [ ] This recording guide — done when committed.
-- [ ] `tools/demo/` driver — CIPHER writes it next session.
+- [x] Demo drivers — DONE + live-verified (palinurus-demo rewards + depin-attest-demo attest, PR #76).
 - [ ] Marketing site (`palinurus.rectorspace.com`) — scaffolds next, embeds
       this video.
 - [ ] All 7 chunks recorded + verified.

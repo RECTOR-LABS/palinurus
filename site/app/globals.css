@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #07090f;
+  --color-bg-soft: #0d1117;
+  --color-panel: #11161f;
+  --color-border: #232a36;
+  --color-ink: #e6edf3;
+  --color-ink-muted: #8b949e;
+  --color-ink-faint: #6e7681;
+
+  --color-attest: #2dd4bf;
+  --color-rewards: #fbbf24;
+  --color-sol-purple: #9945ff;
+  --color-sol-green: #14f195;
+  --color-telegram: #229ed9;
+  --color-relay: #ff7a59;
+
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Solana brand gradient text */
+.sol-gradient {
+  background: linear-gradient(90deg, var(--color-sol-purple), var(--color-sol-green));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sol-gradient-bg {
+  background: linear-gradient(90deg, var(--color-sol-purple), var(--color-sol-green));
+}
+
+/* subtle grid backdrop for the hero */
+.hero-grid {
+  background-image:
+    radial-gradient(60rem 60rem at 70% -10%, rgba(153, 69, 255, 0.12), transparent 60%),
+    radial-gradient(50rem 50rem at 10% 10%, rgba(20, 241, 149, 0.08), transparent 55%),
+    linear-gradient(to bottom, var(--color-bg), var(--color-bg-soft));
+}
+
+.hairline {
+  border-color: var(--color-border);
+}
+
+/* monospace pill */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+}

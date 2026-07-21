@@ -61,10 +61,13 @@ Run every item. **Do not skip** — a mid-record failure wastes a whole chunk.
 ### 1b. The repo + secrets
 ```bash
 cd ~/local-dev/RECTOR-LABS/zeroclaw-plugins
-git log --oneline -3          # confirm head = 198d2f7 (feat/depin-attest)
+git log --oneline -1          # confirm head = c81ccdd (feat/depin-attest: T2 demo driver)
 cd plugins/depin-rewards
-cargo test                    # MUST be 49/49 green before recording
-cargo clippy --all-targets -- -D warnings   # MUST be clean
+cargo test --features demo    # MUST be 52 passed (49 core + 3 demo) before recording
+cargo clippy --features demo --all-targets -- -D warnings   # MUST be clean
+cd ../depin-attest
+cargo test --features demo    # MUST be 74 passed (68 core + 6 demo)
+cargo clippy --features demo --all-targets -- -D warnings # MUST be clean
 ```
 - [ ] `cargo test` = **49 passed**.
 - [ ] `cargo clippy` = **no warnings**.
@@ -119,7 +122,8 @@ code path against live services.
 >   Live-verified: real attestation PDA `52QV…D3uW` + real unsigned durable-nonce tx.
 >
 > The drivers are the only demo-only code; all logic is the shipped, tested
-> plugin core (194 host tests now: 71 core + 68 attest + 49 rewards + 6 demo).
+> plugin core (197 host tests now: 71 core + 74 attest [68 core + 6 demo] +
+> 52 rewards [49 core + 3 demo]).
 
 ---
 
@@ -136,7 +140,7 @@ that chunk only.** Keep each clip as a separate file
 | 3 | **summary — 0.02 HNT earned** | ~25s | Run the driver's summary step (30d window). Terminal prints the rewards line + breakdown + owner. | Total reads `0.02 HNT` (≈0.02059069); `beacon` + `witness` non-zero; `owner` short-address shown. |
 | 4 | **watch → the Telegram alert (MONEY SHOT)** | ~25s | Run the driver's watch step (`prev_active=true`). Terminal prints "alert(s) sent: offline-alert". Cut to phone: the real Telegram notification drops in. | **Phone actually receives the Telegram message** with the hotspot name + "went OFFLINE". This is the beat — if the phone doesn't ping, re-record. |
 | 5 | **custody one-liner** | ~10s | Terminal: `cargo test no_signing_capability_in_crate` (or show the README custody table). Voiceover: "the plugin holds no key of any kind." | Test passes / table legible. |
-| 6 | **depin-attest — simulated reading → real Solana tx** | ~35s | `cd plugins/depin-attest && cargo run --features demo --bin depin-attest-demo`. Terminal prints the attestation PDA + explorer URL + the full unsigned durable-nonce tx (base64). Paste the tx into the explorer's tx inspector; paste the PDA into the address bar. | Explorer tx inspector shows the real `create_attestation` ix (program SAS, accounts, data). The PDA is recomputable from the reading. The reading is fake; the Solana artifacts are 100% real. |
+| 6 | **depin-attest — simulated reading → REAL on-chain attestation** | ~35s | `cd plugins/depin-attest && ATTEST_MODE=t2 ATTEST_MEMO_FALLBACK=true ATTEST_SESSION_KEYFILE=~/Documents/secret/solana-devnet.json cargo run --features demo --bin depin-attest-demo`. Terminal prints `✓ attested + submitted` + signature + explorer link + `✅ real on-chain attestation`. Wait ~6s, open the explorer link → **Success / Finalized**. | Explorer shows **Success/Finalized** for the same signature; Memo + System programs visible. The reading is simulated; the Solana tx is **real and confirmed**. See `demo-recording-walkthrough.md` chunk 6. |
 | 7 | **close + CTA** | ~15s | Terminal: PR link `github.com/zeroclaw-labs/zeroclaw-plugins/pull/76` + `palinurus.rectorspace.com`. Voiceover sign-off. | Links legible; hold for 2s. |
 
 **Total target: ~2:50.** Leaves a 10s buffer under the 3:00 hard cap.
@@ -209,17 +213,18 @@ breathe" time. Record the VO to match the chunks; ffmpeg aligns timing.
 > No signing dependency, no signing code path anywhere in the crate.
 > The agent proposes; a human or a Squads multisig disposes.
 
-**[Chunk 6 — depin-attest]**
+**[Chunk 6 — depin-attest (T2, real on-chain)]**
 > The second plugin, depin-attest, takes a sensor reading — simulated
-> here — and builds a real unsigned Solana transaction: a Solana
-> Attestation Service create-attestation instruction, composed with a
-> durable nonce so it survives an approval queue. The reading is fake.
-> The attestation PDA, the instruction, the explorer link — those are real.
+> here — and the agent signs and submits a real attestation to Solana
+> devnet. A scoped session key, locked to a {System, SAS, Memo} program
+> allowlist with hard caps, signs the durable-nonce transaction. The
+> reading is fake. The signature, the confirmed transaction, the explorer
+> link — those are real.
 
 **[Chunk 7 — close]**
 > Two plugins, one minimal substrate on crates.io, a hundred and
-> eighty-eight tests, all wasm-clean. Track C — the DePIN lane nobody
-> else entered. PR link and the project site are on screen.
+> ninety-seven tests, all wasm-clean. Track C — the DePIN lane. PR link
+> and the project site are on screen.
 
 ---
 

@@ -20,6 +20,7 @@ import {
   Connection, Keypair, PublicKey, Transaction, TransactionInstruction,
   sendAndConfirmTransaction, LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
+import { isSignerRole, isWritableRole } from '@solana/kit';
 import {
   deriveCredentialPda, deriveSchemaPda,
   getCreateCredentialInstruction, getCreateSchemaInstruction,
@@ -46,8 +47,10 @@ function toTxInstruction(ix) {
     programId: new PublicKey(ix.programAddress),
     keys: ix.accounts.map(a => ({
       pubkey: new PublicKey(a.address),
-      isSigner: a.isSigner,
-      isWritable: a.isWritable,
+      // sas-lib 1.0.10 exposes a numeric `role`, not isSigner/isWritable.
+      // Map via the @solana/kit role helpers (0=RO, 1=WRITABLE, 2=RO_SIGNER, 3=WR_SIGNER).
+      isSigner: isSignerRole(a.role),
+      isWritable: isWritableRole(a.role),
     })),
     data: Buffer.from(ix.data),
   });

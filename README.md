@@ -24,12 +24,12 @@ The thesis: an agent with a private key and an LLM in the loop is a hot wallet w
 
 ## Status
 
-✅ **Phase 0–3 complete.** `palinurus-core` v0.1.0 is live on crates.io (PDA derivation hand-rolled from `sha2` + `curve25519-dalek` — `solana-sdk`/`solana-program` can't compile for `wasm32-wasip2`, so we rebuilt `find_program_address` and cross-checked it byte-for-byte against `solana_program` and `@solana/web3.js`). Both plugins are implemented and live on [PR #76](https://github.com/zeroclaw-labs/zeroclaw-plugins/pull/76) to `zeroclaw-labs/zeroclaw-plugins` — 188 host tests across the trio, all `clippy -D warnings` + `wasm32-wasip2` clean.
+✅ **Phase 0–4 complete.** `palinurus-core` v0.1.0 is live on crates.io (PDA derivation hand-rolled from `sha2` + `curve25519-dalek` — `solana-sdk`/`solana-program` can't compile for `wasm32-wasip2`, so we rebuilt `find_program_address` and cross-checked it byte-for-byte against `solana_program` and `@solana/web3.js`). Both plugins are implemented and live on [PR #76](https://github.com/zeroclaw-labs/zeroclaw-plugins/pull/76) to `zeroclaw-labs/zeroclaw-plugins` — **197 host tests** across the trio, all `clippy -D warnings` + `wasm32-wasip2` clean. The `depin-attest` T2 custody path is **verified live on devnet** — a real, explorer-verifiable on-chain attestation (see the plugin README).
 
 - **`depin-rewards` rewards path is verified live** against the real Relay API on the free Community tier (the live smoke test surfaced & fixed 3 real bugs the mocked tests couldn't catch — see the plugin README).
 - **`depin-rewards` claim tx is deferred** by design: Helium hotspots are compressed NFTs, so the claim is `distribute_compression_rewards_v0` + a DAS `get_asset_proof` merkle proof — a focused multi-session effort, not a rushed slice. The homework is done; impl is the next milestone.
 
-🚧 **Phase 4–5 in progress** — the demo track (wiring diagram ✅, marketing site, demo recording guide, ≤3 min demo video) + Superteam submission. Deadline: winner announced Aug 21 2026.
+🚧 **Phase 5 in progress** — the demo video + Superteam submission. Phase 4 done: wiring diagram ✅, marketing site ✅ (palinurus.rectorspace.com), demo recording guide ✅, demo drivers ✅ (live-verified). **Submit by Aug 7 2026; winner announced Aug 21 2026.**
 
 ## Wiring
 

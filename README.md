@@ -17,8 +17,8 @@ The thesis: an agent with a private key and an LLM in the loop is a hot wallet w
 | Crate | What it does | Custody |
 |---|---|---|
 | `palinurus-core` | The shared `wasm32-wasip2`-friendly Solana substrate the plugins import: PDA derivation, base58, borsh, versioned-tx construction, durable-nonce handling, RPC over the host's `wasi:http`, response shaping. Pure-core/thin-shim, host-tested, MIT, crates.io-published. | — |
-| `depin-attest` | Take a sensor reading (from the host's hardware via the SOP engine), commit a periodic attestation on-chain via the [Solana Attestation Service](https://attest.solana.com/) (or memo fallback), with a durable-nonce replay guard. 68 host tests, wasm clean. | T1 (unsigned, multisig signs) default + T2 (autonomous, scoped session key) opt-in |
-| `depin-rewards` | Watch a public Helium hotspot (no ownership required) for online/offline flips + rewards; fire real Telegram alerts; draft an unsigned rewards-claim tx. 49 host tests, wasm clean, **no signing key anywhere in the crate**. | T0 (reads + alerts) + T1 (unsigned claim, roadmap). No T2 |
+| `depin-attest` | Take a sensor reading (from the host's hardware via the SOP engine), commit a periodic attestation on-chain via the [Solana Attestation Service](https://attest.solana.com/) (or memo fallback), with a durable-nonce replay guard. 74 host tests, wasm clean. **T2 path verified live on devnet.** | T1 (unsigned, multisig signs) default + T2 (autonomous, scoped session key) opt-in **— verified on devnet** |
+| `depin-rewards` | Watch a public Helium hotspot (no ownership required) for online/offline flips + rewards; fire real Telegram alerts; draft an unsigned rewards-claim tx. 52 host tests, wasm clean, **no signing key anywhere in the crate**. | T0 (reads + alerts) + T1 (unsigned claim, roadmap). No T2 |
 
 > A stream of signed attestations from a stable key *is* an oracle feed — the `depin-attest` README documents how to consume the attestation stream as an oracle, rather than shipping a separate `oracle-publish` component. Depth over breadth, per the bounty's guidance.
 
@@ -31,11 +31,37 @@ The thesis: an agent with a private key and an LLM in the loop is a hot wallet w
 
 🚧 **Phase 5 in progress** — the demo video + Superteam submission. Phase 4 done: wiring diagram ✅, marketing site ✅ (palinurus.rectorspace.com), demo recording guide ✅, demo drivers ✅ (live-verified). **Submit by Aug 7 2026; winner announced Aug 21 2026.**
 
+## Live on devnet
+
+The `depin-attest` T2 custody path is **verified on Solana devnet** — a real, explorer-verifiable attestation, not an unsigned draft.
+
+<p align="center"><em>The T2 demo driver — signs + submits on camera:</em></p>
+
+<img src="docs/screenshots/terminal-t2-attestation.png" alt="Terminal: depin-attest T2 demo driver output — real signature + explorer link" width="88%"/>
+
+<p align="center"><em>The confirmed transaction on Solana explorer (Success · Finalized):</em></p>
+
+<img src="docs/screenshots/devnet-attestation-explorer.png" alt="Solana explorer: confirmed devnet attestation — Success, Finalized" width="88%"/>
+
+- tx [`BsdBnMtJ…2qGYo`](https://explorer.solana.com/tx/BsdBnMtJHFarDREDdA7hgbGp2hUe4mBMzw4erjM9jrVhQdRyS4yQxtTpCEtobrxjiCj5zKMHMuwVKPd2Pv2qGYo?cluster=devnet) · **Success / Finalized** · slot `477808575` · fee `0.000005` SOL · version `0` (versioned tx → durable nonce)
+- durable nonce advanced `F3tGxZwV… → HxmL2Nu7…` (replay guard live) · reading committed on-chain as a memo: `palinurus: bme280-1=24.7celsius @ 1784621332`
+- custody guards enforced **before signing**: session-key identity · program allowlist `{System, SAS, Memo}` · lamport cap · daily cap
+
+> **SAS vs memo path.** The default is the **memo program** (cheap, high-throughput — the landed proof above). The **SAS** path (`create_attestation`, verifiable + credential-bound) builds the instruction + derives the PDA, but on-chain landing is blocked on schema creation (SAS `0x4` — a stale-arg issue against `sas-lib@1.0.10`'s `getCreateSchemaInstruction`; the credential creates cleanly). SAS ix + PDA are tested + cross-checked via TS oracles. On-chain SAS landing is the next milestone.
+
 ## Wiring
 
 <img src="docs/wiring-diagram.svg" alt="Palinurus wiring diagram: physical edge → ZeroClaw agent → Solana, with custody tiers and the cold signing path" width="100%"/>
 
 A $40 Raspberry Pi running ZeroClaw hosts two Palinurus WIT plugins. `depin-attest` turns a sensor reading into a Solana Attestation Service attestation (unsigned tx → human/multisig signs). `depin-rewards` watches any public Helium hotspot via the Relay API and fires Telegram alerts the moment it goes dark. The agent never holds a main wallet key — see the cold path across the bottom.
+
+## Marketing site
+
+<p align="center">
+<a href="https://palinurus.rectorspace.com"><img src="docs/screenshots/marketing-site.png" alt="Palinurus marketing site — palinurus.rectorspace.com" width="90%"/></a>
+</p>
+
+Live at **[palinurus.rectorspace.com](https://palinurus.rectorspace.com)** — Next.js 16 + Tailwind 4, dark mode, auto-deployed from `main` via Vercel.
 
 ## Build & test
 

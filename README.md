@@ -12,7 +12,7 @@
 [![crates.io](https://img.shields.io/crates/v/palinurus-core?label=palinurus%20core&color=orange)](https://crates.io/crates/palinurus-core)
 [![devnet](https://img.shields.io/badge/devnet-T2_verified-brightgreen)](#live-on-devnet)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![site](https://img.shields.io/badge/site-palinurus.rectorspace.com-blue)](https://palinurus.rectorspace.com)
+[![site](https://img.shields.io/badge/site-live-blue)](https://palinurus.rectorspace.com)
 
 </div>
 

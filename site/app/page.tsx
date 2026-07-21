@@ -10,10 +10,10 @@ const BOUNTY_URL = "https://superteam.fun/earn/listing/zeroclaw";
 const CORE_CRATES = "https://crates.io/crates/palinurus-core";
 
 const facts = [
-  { k: "188", v: "host tests, all green" },
+  { k: "197", v: "host tests, all green" },
   { k: "wasm32-wasip2", v: "clean component build" },
   { k: "v0.1.0", v: "palinurus-core on crates.io" },
-  { k: "0 keys", v: "held by the agent" },
+  { k: "devnet", v: "real on-chain T2 attestation — verified" },
 ];
 
 const plugins = [
@@ -21,16 +21,16 @@ const plugins = [
     name: "depin-attest",
     accent: "attest" as const,
     tag: "the reference implementation nobody else can build",
-    body: "A sensor reading flows in → the plugin builds a real unsigned versioned transaction containing a Solana Attestation Service create_attestation instruction, composed with a durable nonce (so it survives an approval queue). The reading is simulated in the demo; the PDA, the instruction, and the explorer link are real.",
-    points: ["68 host tests", "memo fallback path", "T1 default · T2 opt-in"],
-    custody: "T1 default · T2 opt-in",
+    body: "A sensor reading flows in → the plugin builds a real versioned transaction containing a Solana Attestation Service create_attestation instruction, composed with a durable nonce (so it survives an approval queue). The reading is simulated in the demo; the PDA, the instruction, the signature, and the explorer link are real. The T2 custody path (scoped session key, {System, SAS, Memo} allowlist, caps) is verified live on devnet — a real confirmed attestation.",
+    points: ["74 host tests", "T2 verified on devnet", "memo fallback + SAS path"],
+    custody: "T1 default · T2 opt-in (verified on devnet)",
   },
   {
     name: "depin-rewards",
     accent: "rewards" as const,
     tag: "the daily-use workhorse — no hardware, no hotspot ownership",
     body: "Watch any public Helium hotspot via the Relay API. Get a Telegram ping the moment it goes offline, and a daily rewards summary at 08:00. Verified live against a real hotspot (Fit Pine Capybara — earned 0.02 HNT, then went dark). No signing key anywhere in the crate.",
-    points: ["49 host tests", "real Relay + Telegram", "T0 reads · T1 unsigned · no T2"],
+    points: ["52 host tests", "real Relay + Telegram", "T0 reads · T1 unsigned · no T2"],
     custody: "T0 reads · T1 unsigned · no T2",
   },
 ];

@@ -1,10 +1,45 @@
-# Palinurus
+<div align="center">
+
+# 🦞 Palinurus
 
 **The Solana DePIN node that talks.** A navigator at the physical edge, attesting back to the chain.
 
+*A ZeroClaw agent on a \$40 Raspberry Pi becomes a Solana-attesting, reward-watching DePIN node — the agent proposes, a human/Squads multisig disposes, no main key ever leaves the cold path.*
+
+[![Track](https://img.shields.io/badge/Track-C_·_DePIN-6f42c1)](https://superteam.fun/earn/listing/zeroclaw)
+[![Custody](https://img.shields.io/badge/custody-T0_·_T1_·_T2-0969da)](#custody-at-a-glance)
+[![Tests](https://img.shields.io/badge/tests-197_host-brightgreen)](#build--test)
+[![crates.io](https://img.shields.io/crates/v/palinurus-core?label=palinurus%20core&color=orange)](https://crates.io/crates/palinurus-core)
+[![devnet](https://img.shields.io/badge/devnet-T2_verified-brightgreen)](#live-on-devnet)
+[![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![site](https://img.shields.io/badge/site-palinurus.rectorspace.com-blue)](https://palinurus.rectorspace.com)
+
+</div>
+
+<div align="center">
+
+<img src="docs/wiring-diagram.svg" alt="Palinurus wiring: physical edge → ZeroClaw agent → Solana, custody tiers + cold signing path" width="100%"/>
+
+</div>
+
+> Built for the [Superteam Brasil × ZeroClaw bounty](https://superteam.fun/earn/listing/zeroclaw) — *"Build Solana-native plugins for Zeroclaw 🦞"*. **Track C (DePIN & the physical edge)**, the sponsor's favorite: *"the one nobody else can build."*
+
 Palinurus is a suite of Solana-native tool plugins for [ZeroClaw](https://github.com/zeroclaw-labs/zeroclaw) — the self-hosted, Rust-based AI agent runtime (32k ⭐) — built as `wasm32-wasip2` WIT components against the ZeroClaw plugin contract. It brings real Solana capability to an autonomous agent that runs on your own hardware, with your own keys.
 
-> Built for the [Superteam Brasil × ZeroClaw bounty](https://superteam.fun/earn/listing/zeroclaw) — *"Build Solana-native plugins for Zeroclaw 🦞"*. Track C (DePIN & the physical edge), the sponsor's favorite: *"the one nobody else can build."*
+---
+
+## Table of contents
+
+- [Why](#why)
+- [What's here](#whats-here)
+- [Status](#status)
+- [Live on devnet](#live-on-devnet) — real on-chain proof
+- [Wiring](#wiring)
+- [Marketing site](#marketing-site)
+- [Build & test](#build--test)
+- [License](#license)
+
+---
 
 ## Why
 
@@ -22,14 +57,23 @@ The thesis: an agent with a private key and an LLM in the loop is a hot wallet w
 
 > A stream of signed attestations from a stable key *is* an oracle feed — the `depin-attest` README documents how to consume the attestation stream as an oracle, rather than shipping a separate `oracle-publish` component. Depth over breadth, per the bounty's guidance.
 
+### Custody at a glance
+
+| Plugin | Reads (T0) | Unsigned tx (T1) | Autonomous sign (T2) |
+|---|---|---|---|
+| `depin-attest` | — | ✅ durable-nonce attestation | ✅ opt-in, scoped session key, allowlist + caps — **verified on devnet** |
+| `depin-rewards` | ✅ Relay + Telegram | 📋 unsigned claim tx (design documented, deferred) | ❌ never (claim moves value → multisig) |
+
+The agent never holds a main wallet key. Pattern: *agent proposes, multisig disposes.*
+
 ## Status
 
-✅ **Phase 0–4 complete.** `palinurus-core` v0.1.0 is live on crates.io (PDA derivation hand-rolled from `sha2` + `curve25519-dalek` — `solana-sdk`/`solana-program` can't compile for `wasm32-wasip2`, so we rebuilt `find_program_address` and cross-checked it byte-for-byte against `solana_program` and `@solana/web3.js`). Both plugins are implemented and live on [PR #76](https://github.com/zeroclaw-labs/zeroclaw-plugins/pull/76) to `zeroclaw-labs/zeroclaw-plugins` — **197 host tests** across the trio, all `clippy -D warnings` + `wasm32-wasip2` clean. The `depin-attest` T2 custody path is **verified live on devnet** — a real, explorer-verifiable on-chain attestation (see the plugin README).
+✅ **Phase 0–4 complete.** `palinurus-core` v0.1.0 is live on crates.io (PDA derivation hand-rolled from `sha2` + `curve25519-dalek` — `solana-sdk`/`solana-program` can't compile for `wasm32-wasip2`, so we rebuilt `find_program_address` and cross-checked it byte-for-byte against `solana_program` and `@solana/web3.js`). Both plugins are implemented and live on [PR #76](https://github.com/zeroclaw-labs/zeroclaw-plugins/pull/76) to `zeroclaw-labs/zeroclaw-plugins` — **197 host tests** across the trio, all `clippy -D warnings` + `wasm32-wasip2` clean. The `depin-attest` T2 custody path is **verified live on devnet** — a real, explorer-verifiable on-chain attestation.
 
 - **`depin-rewards` rewards path is verified live** against the real Relay API on the free Community tier (the live smoke test surfaced & fixed 3 real bugs the mocked tests couldn't catch — see the plugin README).
 - **`depin-rewards` claim tx is deferred** by design: Helium hotspots are compressed NFTs, so the claim is `distribute_compression_rewards_v0` + a DAS `get_asset_proof` merkle proof — a focused multi-session effort, not a rushed slice. The homework is done; impl is the next milestone.
 
-🚧 **Phase 5 in progress** — the demo video + Superteam submission. Phase 4 done: wiring diagram ✅, marketing site ✅ (palinurus.rectorspace.com), demo recording guide ✅, demo drivers ✅ (live-verified). **Submit by Aug 7 2026; winner announced Aug 21 2026.**
+🚧 **Phase 5 in progress** — the demo video + Superteam submission. Phase 4 done: wiring diagram ✅, marketing site ✅ ([palinurus.rectorspace.com](https://palinurus.rectorspace.com)), demo recording guide ✅, demo drivers ✅ (live-verified). **Submit by Aug 7 2026; winner announced Aug 21 2026.**
 
 ## Live on devnet
 
@@ -53,7 +97,7 @@ The `depin-attest` T2 custody path is **verified on Solana devnet** — a real, 
 
 <img src="docs/wiring-diagram.svg" alt="Palinurus wiring diagram: physical edge → ZeroClaw agent → Solana, with custody tiers and the cold signing path" width="100%"/>
 
-A $40 Raspberry Pi running ZeroClaw hosts two Palinurus WIT plugins. `depin-attest` turns a sensor reading into a Solana Attestation Service attestation (unsigned tx → human/multisig signs). `depin-rewards` watches any public Helium hotspot via the Relay API and fires Telegram alerts the moment it goes dark. The agent never holds a main wallet key — see the cold path across the bottom.
+A \$40 Raspberry Pi running ZeroClaw hosts two Palinurus WIT plugins. `depin-attest` turns a sensor reading into a Solana Attestation Service attestation (unsigned tx → human/multisig signs). `depin-rewards` watches any public Helium hotspot via the Relay API and fires Telegram alerts the moment it goes dark. The agent never holds a main wallet key — see the cold path across the bottom.
 
 ## Marketing site
 
@@ -67,9 +111,11 @@ Live at **[palinurus.rectorspace.com](https://palinurus.rectorspace.com)** — N
 
 ```bash
 rustup target add wasm32-wasip2
-cargo test                                  # host tests, no wasm toolchain needed
-cargo build --release --target wasm32-wasip2 # confirm the core compiles to the component target
+cargo test                                  # 197 host tests, no wasm toolchain needed
+cargo build --release --target wasm32-wasip2 # the core compiles to the component target
 ```
+
+The plugin + demo driver source, the recording guide, and the full custody + injection transcripts live in the [PR #76](https://github.com/zeroclaw-labs/zeroclaw-plugins/pull/76) repo (`plugins/depin-attest`, `plugins/depin-rewards`).
 
 ## License
 

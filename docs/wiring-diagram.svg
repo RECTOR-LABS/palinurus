@@ -131,7 +131,7 @@
   <g id="node-solana">
     <rect x="990" y="150" width="240" height="240" rx="14" fill="#161b22" stroke="url(#solana)" stroke-width="1.8"/>
     <text x="1110" y="182" text-anchor="middle" font-size="15" font-weight="700" fill="#e6edf3">Solana</text>
-    <text x="1110" y="200" text-anchor="middle" font-size="10" fill="#8b949e">devnet · mainnet-beta</text>
+    <text x="1110" y="200" text-anchor="middle" font-size="10" fill="#8b949e">mainnet-verified · devnet</text>
 
     <!-- SAS (attest lane) -->
     <rect x="1004" y="216" width="212" height="60" rx="10" fill="#0d1117" stroke="#14F195" stroke-width="1.4"/>

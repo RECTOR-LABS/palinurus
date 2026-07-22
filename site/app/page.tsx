@@ -65,10 +65,16 @@ export default function Home() {
       <header id="top" className="hero-grid">
         <div className="mx-auto max-w-6xl px-5 py-24 sm:py-32">
           <div className="mx-auto max-w-3xl text-center">
-            <span className="pill text-[color:var(--color-ink-muted)]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-sol-green)]" aria-hidden />
-              Superteam Brasil × ZeroClaw · Track C (DePIN)
-            </span>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <span className="pill text-[color:var(--color-ink-muted)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-sol-green)]" aria-hidden />
+                Superteam Brasil × ZeroClaw · Track C (DePIN)
+              </span>
+              <span className="pill" style={{ color: "var(--color-sol-green)", borderColor: "var(--color-sol-green)" }}>
+                <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-sol-green)]" aria-hidden />
+                ✓ T2 verified on mainnet
+              </span>
+            </div>
             <h1 className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
               The Solana DePIN node <br className="hidden sm:block" />
               that <span className="sol-gradient">talks</span>.

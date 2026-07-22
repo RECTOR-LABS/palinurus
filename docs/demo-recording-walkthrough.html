@@ -76,14 +76,14 @@ you record → save as <code>docs/recording/chunk-NN-&lt;name&gt;.mp4</code> →
 </ul>
 
 <h2 id="pre">Pre-flight <span class="small" style="margin-left:auto">do once, before chunk 1</span></h2>
-<div class="cmd"><span class="c"># repo head + tests green (counts updated to the C1 commit)</span>
+<div class="cmd"><span class="c"># repo head + tests green (212 host tests; post-mainnet + README restructure)</span>
 cd ~/local-dev/RECTOR-LABS/zeroclaw-plugins
-git log --oneline -1            <span class="c"># expect: c81ccdd  feat(depin-attest): T2 demo driver…</span>
+git log --oneline -1            <span class="c"># expect: fe7b388  deps(depin-attest): sync Cargo.lock… (or newer; branch feat/depin-attest)</span>
 cd plugins/depin-rewards
-cargo test <span class="k">--features</span> demo      <span class="c"># MUST be 52 passed (49 core + 3 demo)</span>
+cargo test <span class="k">--features</span> demo      <span class="c"># MUST be 58 passed (55 core + 3 demo)</span>
 cargo clippy <span class="k">--features</span> demo --all-targets -- -D warnings   <span class="c"># MUST be clean</span>
 cd ../depin-attest
-cargo test <span class="k">--features</span> demo      <span class="c"># MUST be 74 passed (68 core + 6 demo)</span>
+cargo test <span class="k">--features</span> demo      <span class="c"># MUST be 83 passed (77 core + 6 demo)</span>
 cargo clippy <span class="k">--features</span> demo --all-targets -- -D warnings   <span class="c"># MUST be clean</span>
 
 <span class="c"># Relay live + Capybara offline (the hero)</span>
@@ -105,25 +105,26 @@ curl -s -H <span class="pr">"Authorization: Bearer $RELAY_API_KEY"</span> \
 <h3>Setup before hitting record</h3>
 <ul class="chk">
 <li>Open <code>https://github.com/RECTOR-LABS/palinurus</code> in Chrome (dark mode).</li>
-<li>Scroll to the <b>very top</b> — the <code>🦞 Palinurus</code> title at the top of the viewport.</li>
+<li>Scroll to the <b>very top</b> — the <b>Palinurus hero banner</b> (SVG: wordmark + edge→signal→chain motif + tagline + pills) at the top of the viewport.</li>
 <li>Optional: <span class="kbd">⌘+</span> once (to 110–125%) if the wiring-diagram column labels look small — only if the full diagram still fits the viewport width. If zooming overflows horizontally, stay at 100%.</li>
 <li>No cursor movement until 0:08. Do Not Disturb ON.</li>
 </ul>
 
-<h3>Shot-by-shot (20s total, 5 segments)</h3>
+<h3>Shot-by-shot (20s total, 6 segments)</h3>
 <table>
 <tr><th>Time</th><th>Dur</th><th>What's on screen</th><th>Action</th></tr>
-<tr><td><b>0.0→3.0</b></td><td>3s</td><td><code>🦞 Palinurus</code> title + tagline <i>“The Solana DePIN node that talks…”</i></td><td><b>Hold static.</b> Let the brand + tagline land. Don't move the cursor.</td></tr>
-<tr><td><b>3.0→6.0</b></td><td>3s</td><td>Scroll down → the italic thesis (<i>“$40 Raspberry Pi…”</i>) + the <b>7 badges</b></td><td><b>Slow scroll</b> (mouse wheel, ~1 notch/sec) to reveal thesis + badges. Hold ~1s on badges so “212 host tests” + “mainnet T2 verified” read clearly.</td></tr>
-<tr><td><b>6.0→8.0</b></td><td>2s</td><td>Wiring-diagram title appears (<i>“physical edge → ZeroClaw agent → Solana”</i>)</td><td><b>Continue slow scroll</b> until the <b>full wiring diagram</b> is framed (all 5 column labels visible across the top: PHYSICAL EDGE · AGENT RUNTIME · PLUGINS · EXTERNAL APIs · SOLANA).</td></tr>
-<tr><td><b>8.0→18.0</b></td><td>10s</td><td>The full wiring diagram (5 columns, left→right)</td><td><b>Hold the diagram still. Move only the cursor</b>, tracing left→right across the 5 columns at ~2s each: <b>Physical Edge</b> (Pi 4) → <b>Agent Runtime</b> (ZeroClaw SOP/LLM) → <b>Plugins</b> (depin-attest · depin-rewards) → <b>External APIs</b> (Relay · Telegram) → <b>Solana</b> (SAS + lazy-distributor). Don't scroll, don't click — just guide the eye with the cursor.</td></tr>
+<tr><td><b>0.0→3.0</b></td><td>3s</td><td>The <b>SVG hero banner</b> — wordmark “Palinurus”, the edge-node→signal→chain motif, tagline + status pills</td><td><b>Hold static.</b> Let the brand + motif land. Don't move the cursor.</td></tr>
+<tr><td><b>3.0→6.0</b></td><td>3s</td><td>Scroll down → the <b>7 badges</b> + bounty context + intro paragraph</td><td><b>Slow scroll</b> (mouse wheel, ~1 notch/sec) to reveal the badges. Hold ~1s so “212 host tests” + “mainnet T2 verified” read clearly.</td></tr>
+<tr><td><b>6.0→9.0</b></td><td>3s</td><td><code>## The problem</code> — the thesis lands (<i>“$40 Raspberry Pi… a hot wallet with a prompt-injection surface”</i>)</td><td><b>Continue slow scroll</b> through the problem framing — let the “signing safely is the hard part” line land.</td></tr>
+<tr><td><b>9.0→11.0</b></td><td>2s</td><td><code>## The solution</code> → the wiring diagram appears (<i>“physical edge → ZeroClaw agent → Solana”</i>)</td><td><b>Continue slow scroll</b> until the <b>full wiring diagram</b> is framed (all 5 column labels visible across the top: PHYSICAL EDGE · AGENT RUNTIME · PLUGINS · EXTERNAL APIs · SOLANA).</td></tr>
+<tr><td><b>11.0→18.0</b></td><td>7s</td><td>The full wiring diagram (5 columns, left→right)</td><td><b>Hold the diagram still. Move only the cursor</b>, tracing left→right across the 5 columns at ~1.4s each: <b>Physical Edge</b> (Pi 4) → <b>Agent Runtime</b> (ZeroClaw SOP/LLM) → <b>Plugins</b> (depin-attest · depin-rewards) → <b>External APIs</b> (Relay · Telegram) → <b>Solana</b> (SAS + lazy-distributor). Don't scroll, don't click — just guide the eye with the cursor.</td></tr>
 <tr><td><b>18.0→20.0</b></td><td>2s</td><td>End resting on the <b>Solana</b> column (the destination/chain)</td><td><b>Hold static</b> on Solana for 2s — the “everything flows to the chain” beat. Cut.</td></tr>
 </table>
 
 <h3>What to capture (the rules)</h3>
 <ul class="chk">
-<li><b>Frame = the GitHub hero only.</b> Title → thesis → badges → wiring diagram. That's it.</li>
-<li><b>Do NOT scroll past the wiring diagram.</b> Below it is <code>## Live on mainnet</code> with the terminal + mainnet explorer screenshots — that <b>spoils chunk 6</b>. If you scroll too far, re-record.</li>
+<li><b>Frame = the GitHub hero only.</b> Banner → badges → The problem → The solution (wiring diagram). That's it.</li>
+<li><b>Do NOT scroll past the wiring diagram.</b> Below it (in <code>## The solution</code> → <code>## Proven on mainnet</code>) are the terminal + mainnet explorer screenshots — that <b>spoils chunk 6</b>. If you scroll too far, re-record.</li>
 <li><b>Smooth + slow.</b> No jerky scrolls, no clicking, no zooming mid-take. The cursor trace across the diagram is the only movement — keep it glacial.</li>
 <li><b>No voiceover now</b> — screen only; CIPHER adds the VO (guide §5 chunk 1) in post, timed to this 20s.</li>
 <li><b>Dark mode</b> (so the dark-styled diagram looks right).</li>
@@ -132,7 +133,7 @@ curl -s -H <span class="pr">"Authorization: Bearer $RELAY_API_KEY"</span> \
 <h3>Send CIPHER: <code>docs/recording/chunk-01-wiring.mp4</code></h3>
 <h3>CIPHER verifies</h3>
 <ul class="chk">
-<li>Title legible ≥ 2s.</li>
+<li>Banner legible ≥ 2s (wordmark + tagline readable).</li>
 <li>Badges legible (“212 host tests” + “mainnet T2 verified” readable).</li>
 <li>All 5 diagram columns legible at some point during the cursor trace.</li>
 <li><b>No spoilers</b> — the mainnet screenshots did NOT appear in frame.</li>
@@ -210,7 +211,7 @@ cargo test <span class="k">--features</span> demo no_signing_capability_in_crate
 
 <h2><span class="n">6</span> depin-attest — real on-chain attestation <span class="badge b-grn">KILLER BEAT · ~35s</span></h2>
 <div class="chunk hot">
-<div class="note"><b>Updated from the original guide.</b> This is the <b>T2 path</b> — the agent SIGNS + SUBMITS a real attestation to devnet. Far more compelling than the T1 unsigned draft: you land a real confirmed tx on camera + open it in the explorer. This is the beat none of the 3 competitors can show.</div>
+<div class="note"><b>Updated from the original guide.</b> This is the <b>T2 path</b> — the agent SIGNS + SUBMITS a real attestation to devnet. Far more compelling than the T1 unsigned draft: you land a real confirmed tx on camera + open it in the explorer. This is the beat no competitor in the field can show — on-chain T2 proof is unique to Palinurus.</div>
 <h3>Run / capture</h3>
 <div class="cmd"><span class="pr">clear</span>
 cd ~/local-dev/RECTOR-LABS/zeroclaw-plugins/plugins/depin-attest

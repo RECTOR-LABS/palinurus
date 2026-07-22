@@ -13,7 +13,7 @@ const facts = [
   { k: "212", v: "host tests, all green" },
   { k: "wasm32-wasip2", v: "clean component build" },
   { k: "v0.1.0", v: "palinurus-core on crates.io" },
-  { k: "devnet", v: "real on-chain T2 attestation — verified" },
+  { k: "mainnet", v: "real on-chain T2 attestation — verified" },
 ];
 
 const plugins = [
@@ -21,9 +21,9 @@ const plugins = [
     name: "depin-attest",
     accent: "attest" as const,
     tag: "the reference implementation nobody else can build",
-    body: "A sensor reading flows in → the plugin builds a real versioned transaction containing a Solana Attestation Service create_attestation instruction, composed with a durable nonce (so it survives an approval queue). The reading is simulated in the demo; the PDA, the instruction, the signature, and the explorer link are real. The T2 custody path (scoped session key, {System, SAS, Memo} allowlist, caps) is verified live on devnet — a real confirmed attestation.",
-    points: ["83 host tests", "T2 verified on devnet", "memo fallback + SAS path"],
-    custody: "T1 default · T2 opt-in (verified on devnet)",
+    body: "A sensor reading flows in → the plugin builds a real versioned transaction containing a Solana Attestation Service create_attestation instruction, composed with a durable nonce (so it survives an approval queue). The reading is simulated in the demo; the PDA, the instruction, the signature, and the explorer link are real. The T2 custody path (scoped session key, {System, SAS, Memo} allowlist, caps) is verified live on mainnet — a real confirmed attestation paying real fees (sig YZTS16nN…3G9TC, Finalized, Mainnet Beta).",
+    points: ["83 host tests", "T2 verified on mainnet", "memo fallback + SAS path"],
+    custody: "T1 default · T2 opt-in (verified on mainnet)",
   },
   {
     name: "depin-rewards",

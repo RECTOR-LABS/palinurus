@@ -36,6 +36,14 @@ The demo has **two beats**:
    tx → real SAS `create_attestation` ix → real PDA → explorer-verifiable on
    devnet. The reading is simulated; the Solana side is not.
 
+> **Mainnet proof (2026-07-22).** The T2 path is now **verified on Solana mainnet** —
+> sig [`YZTS16nN…3G9TC`](https://explorer.solana.com/tx/YZTS16nNNrDhLhFHCtSMhcYTYAkcYQvPn2QUWfWvkw4bJxif77d1Ww36o3c4LYe6r69NAzYNJLDpz93DjR3G9TC)
+> (slot `434472270`, Finalized, Mainnet Beta, memo `palinurus: bme280-1=24.7celsius @ 1784707747`).
+> This is the headline proof (no `?cluster=devnet` in the URL — judges verify it directly). The
+> on-camera demo below still runs **devnet** (shared devnet wallet, per the walkthrough); cut
+> to the mainnet explorer link in the edit for the strongest proof. Two mainnet screenshots
+> live in `docs/screenshots/mainnet-attestation-explorer*.png`.
+
 The wiring diagram (`docs/wiring-diagram.svg`, embedded in the README)
 documents the physical-edge path the attest beat simulates. We show it
 briefly on screen so judges see the Pi→Solana bridge is real, not hand-waved.

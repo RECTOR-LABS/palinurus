@@ -7,6 +7,13 @@
 > pre-flight (§1), voiceover script (§5), and ffmpeg compile (§6) — read it
 > once before you start.
 
+> **Update 2026-07-22 — mainnet proof landed.** The T2 path is now **verified on Solana
+> mainnet** (sig [`YZTS16nN…3G9TC`](https://explorer.solana.com/tx/YZTS16nNNrDhLhFHCtSMhcYTYAkcYQvPn2QUWfWvkw4bJxif77d1Ww36o3c4LYe6r69NAzYNJLDpz93DjR3G9TC),
+> slot `434472270`, Finalized, Mainnet Beta). This is the headline proof — no `?cluster=devnet`
+> in the URL. The on-camera demo below still runs **devnet** (shared devnet wallet, ~5 SOL,
+> ~$0.0007/take — free to re-roll); in the edit, cut to the mainnet explorer link for the
+> strongest judge-visible proof. Mainnet screenshots: `docs/screenshots/mainnet-attestation-explorer*.png`.
+
 ## Workflow
 
 ```

@@ -30,9 +30,9 @@
 | F5 | Attacker-supplied `memo` length is unbounded → oversized tx / RPC waste | `depin_attest.rs:~290` (`build_memo_ix`), execute paths | **Low** *(no fund risk; output shaping caps the preview)* | ✅ Closed — `MEMO_MAX_BYTES=566` + `validate_memo` wired into all 3 execute paths; +1 test |
 | F6 | Nonce account **owner** not verified to be the System program | `depin_attest.rs` execute_t1/t2 (after `parse_nonce_account`) | **Low** *(defense-in-depth; `nonce_account` is config-trusted)* | ✅ Closed — `acct.owner == System` check before `parse_nonce_account` (all 3 paths); +1 test |
 | F7 | `expect()`/panic sites in crypto-critical paths (panic in a wasm component = abort, not a controlled error) | `depin_attest.rs:~216` (`encode`), `versioned_tx.rs:~210,225,232` (`build_unsigned`) | **Low** *(unreachable inputs; robustness)* | ✅ Accepted w/ rationale — unreachable panic documented in-code; core `Result` variant roadmaped for a future `palinurus-core` bump |
-| P1 | Signing correctness: `execute_t2` signs `serialize_message` (raw V0 bytes) — matches Solana's raw-bytes ed25519 verify; **empirically confirmed** by the devnet landing (the demo driver calls the same `execute_t2`) | `depin_attest.rs:~915` (`sign(&msg_bytes)`), `versioned_tx.rs:~243` (`serialize_message`) | — | **Passing** — recommend a `solana_sdk` cross-impl oracle for byte-equivalence rigor |
+| P1 | Signing correctness: `execute_t2` signs `serialize_message` (raw V0 bytes) — matches Solana's raw-bytes ed25519 verify; **empirically confirmed** by the mainnet landing (sig `YZTS16nN…3G9TC`, slot `434472270`; the demo driver calls the same `execute_t2`) | `depin_attest.rs:~915` (`sign(&msg_bytes)`), `versioned_tx.rs:~243` (`serialize_message`) | — | **Passing** — recommend a `solana_sdk` cross-impl oracle for byte-equivalence rigor |
 | P2 | Identity guard enforces `session_key.vk == authority == payer == nonce_authority` **before** any signing | `depin_attest.rs:748-784` (`enforce_session_key_identity`) | — | **Passing** |
-| P3 | Durable-nonce replay guard live: nonce advances on every submit; a replayed/stale signed tx is rejected on-chain | `durable_nonce.rs:91` (`ADVANCE_NONCE_ACCOUNT_IX_DATA=[0x04,0,0,0]`), execute_t2 submits via `send_transaction` | — | **Passing** (devnet-confirmed: nonce advanced `F3tGxZwV… → HxmL2Nu7…`) |
+| P3 | Durable-nonce replay guard live: nonce advances on every submit; a replayed/stale signed tx is rejected on-chain | `durable_nonce.rs:91` (`ADVANCE_NONCE_ACCOUNT_IX_DATA=[0x04,0,0,0]`), execute_t2 submits via `send_transaction` | — | **Passing** (mainnet-confirmed: nonce advanced `BXANchUJ…rbsP` → `HyV7X374…bCMZf`; devnet run also confirmed `F3tGxZwV… → HxmL2Nu7…`) |
 | P4 | `value`/`timestamp`/`sensor_id`/`unit` input validation is fail-closed | `depin_attest.rs` `validate_reading` (finite value, positive timestamp, non-empty id/unit) | — | **Passing** |
 | P5 | `Debug` for `AttestConfig` redacts `session_key` + `rpc_api_key` | `depin_attest.rs:131-170` (manual `Debug`) | — | **Passing** |
 | P6 | Signed tx (`tx_b64`) is computed but **not surfaced** to the LLM (`ToolResult.output = summary` only; `shape_t2` omits tx bytes) | `lib.rs` (returns `out.summary`), `depin_attest.rs:~430` (`shape_t2`) | — | **Passing** (and replay-protected by nonce advance even if leaked) |
@@ -118,11 +118,11 @@
 | # | Lens | Result |
 |---|---|---|
 | 1 | Custody-guard completeness | **F2** (System instruction-level gap); identity + caps enforced at every T2 entry (P2) |
-| 2 | Crypto correctness | **P1** signing-correct (devnet-confirmed; recommend solana_sdk oracle); PDA/nonce derivation oracle-verified in `palinurus-core` |
+| 2 | Crypto correctness | **P1** signing-correct (mainnet-confirmed; recommend solana_sdk oracle); PDA/nonce derivation oracle-verified in `palinurus-core` |
 | 3 | Tx construction | **P3** durable-nonce correct (`durable_nonce.rs` oracle-verified); **F7** panic-vs-Result |
 | 4 | Secret handling | **F4** no zeroize; **P5** Debug redacts key; key not persisted across calls |
 | 5 | Input validation | **P4** reading validated; **F5** memo unbounded |
-| 6 | Replay / front-running | **P3** nonce-advance replay guard (devnet-confirmed); attestation-PDA dedup on SAS path |
+| 6 | Replay / front-running | **P3** nonce-advance replay guard (mainnet-confirmed); attestation-PDA dedup on SAS path |
 | 7 | Error handling / atomicity | guards enforced **before** signing (`execute_t2` order); **F7** panic robustness |
 | 8 | Output shaping | **P6** signed tx not surfaced; ≤200-token summaries; no raw dumps |
 | 9 | Integer / overflow | TTL `checked_add`; `enforce_lamport_cap` `saturating_mul`; `overflow-checks=true` now on; no logic bug found |
@@ -149,4 +149,4 @@
 **Next:** mainnet T2 proof (deploy the *hardened* version) → fold this report into a public "Security" section in the README/PR (the closed audit loop = the evidence).
 ---
 
-*Wallahu a'lam. This review is guidance-driven and cite-backed; it is not a guarantee of completeness. Every "Passing" note above is backed by the cited code location + (where applicable) the devnet landing.*
+*Wallahu a'lam. This review is guidance-driven and cite-backed; it is not a guarantee of completeness. Every "Passing" note above is backed by the cited code location + (where applicable) the mainnet landing.*

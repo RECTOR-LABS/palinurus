@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Palinurus — chunk-by-chunk recording walkthrough</title>
+<style>
+  :root{color-scheme:dark;--bg:#0d1117;--card:#161b22;--border:#1f2937;--ink:#c9d1d9;--mut:#8b949e;--acc:#58a6ff;--grn:#3fb950;--prp:#d2a8ff;--org:#f0883e;--red:#f85149;--ylw:#e3b341}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.6 -apple-system,"SF Pro Text",system-ui,Segoe UI,Roboto,sans-serif}
+  code,pre,.cmd{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  a{color:var(--acc);text-decoration:none}
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px 120px}
+  header{position:sticky;top:0;z-index:5;background:rgba(13,17,23,.86);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:14px 0}
+  header .wrap{padding:0 22px}
+  header h1{font-size:18px;margin:0;font-weight:600}
+  header .sub{color:var(--mut);font-size:13px;margin-top:2px}
+  .flow{background:linear-gradient(90deg,#161b22,#0d1117);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:13.5px;color:var(--mut)}
+  .flow b{color:var(--ink)}
+  .flow code{color:var(--grn);font-size:12.5px}
+  h2{font-size:20px;margin:34px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+  h2 .n{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:#21262d;border:1px solid var(--border);font-size:14px;color:var(--acc)}
+  h3{font-size:15px;margin:18px 0 6px;color:var(--prp);text-transform:uppercase;letter-spacing:.06em}
+  .chunk{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin:16px 0}
+  .chunk.hot{border-color:#3d2a14;box-shadow:0 0 0 1px #3d2a14 inset}
+  .badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;margin-left:auto}
+  .b-red{background:rgba(248,81,73,.14);color:var(--red);border:1px solid rgba(248,81,73,.4)}
+  .b-grn{background:rgba(63,185,80,.14);color:var(--grn);border:1px solid rgba(63,185,80,.4)}
+  .b-org{background:rgba(240,136,62,.14);color:var(--org);border:1px solid rgba(240,136,62,.4)}
+  .cmd{background:#010409;border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font-size:13px;line-height:1.55;color:#c9d1d9;margin:8px 0}
+  .cmd .pr{color:var(--grn)}
+  .cmd .c{color:var(--mut)}
+  .cmd .k{color:var(--prp)}
+  ul.chk{list-style:none;padding:0;margin:6px 0}
+  ul.chk li{padding:4px 0 4px 26px;position:relative;color:var(--ink)}
+  ul.chk li:before{content:"☐";position:absolute;left:0;color:var(--mut);font-size:15px}
+  .gate{background:linear-gradient(180deg,#10131a,#0d1117);border:1px solid #2a3441;border-radius:10px;padding:14px 18px;margin:18px 0}
+  .gate h3{margin-top:0}
+  .gate ol{margin:6px 0;padding-left:20px}
+  .gate ol li{padding:3px 0}
+  .note{border-left:3px solid var(--ylw);background:rgba(227,179,65,.07);padding:10px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:14px;color:#d8c987}
+  .note b{color:var(--ylw)}
+  .pill{font-size:12px;color:var(--mut)}
+  .pill b{color:var(--ink)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  td,th{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#161b22;color:var(--mut);font-weight:600}
+  hr{border:0;border-top:1px solid var(--border);margin:26px 0}
+  .small{color:var(--mut);font-size:13px}
+  .kbd{background:#21262d;border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:12px;color:var(--ink)}
+</style></head>
+<body>
+<header><div class="wrap">
+<h1>🦞 Palinurus — chunk-by-chunk recording walkthrough</h1>
+<div class="sub">Record one chunk → CIPHER verifies → PASS → record the next. Companion to <code>demo-recording-guide.md</code>.</div>
+</div></header>
+<div class="wrap">
+
+<div class="flow" style="border-color:#3d2a14;box-shadow:0 0 0 1px #3d2a14 inset;background:linear-gradient(90deg,#1a140a,#0d1117)">
+<b style="color:var(--org)">Update 2026-07-22 — mainnet proof landed.</b> &nbsp;·&nbsp;
+The T2 path is now <b>verified on Solana mainnet</b> — sig <a href="https://explorer.solana.com/tx/YZTS16nNNrDhLhFHCtSMhcYTYAkcYQvPn2QUWfWvkw4bJxif77d1Ww36o3c4LYe6r69NAzYNJLDpz93DjR3G9TC">YZTS16nN…3G9TC</a>
+(slot <code>434472270</code>, Finalized, Mainnet Beta, memo <code>palinurus: bme280-1=24.7celsius @ 1784707747</code>). This is the <b>headline proof</b> — no <code>?cluster=devnet</code> in the URL.
+The on-camera demo below still runs <b>devnet</b> (shared devnet wallet, ~5 SOL, ~$0.0007/take — free to re-roll); in the edit, cut to the mainnet explorer link for the strongest judge-visible proof. Mainnet screenshots: <code>docs/screenshots/mainnet-attestation-explorer*.png</code>.
+</div>
+
+<div class="flow">
+<b>Workflow</b> &nbsp;·&nbsp; for each chunk <b>1..7</b>: &nbsp;
+you record → save as <code>docs/recording/chunk-NN-&lt;name&gt;.mp4</code> → tell CIPHER the path → CIPHER verifies (4 gates + chunk-specific) → <b style="color:var(--grn)">PASS</b> → next chunk &nbsp;|&nbsp; <b style="color:var(--red)">FAIL</b> (reason) → re-record that chunk only.
+</div>
+
+<h3 style="color:var(--red)">Hard rules</h3>
+<ul class="chk">
+<li><b>Never record the next chunk before CIPHER PASSes the current one.</b> A bad chunk discovered late wastes everything after it.</li>
+<li><b>No secret on screen, ever.</b> Relay key, Telegram bot token, Solana keypair — none may appear. Drivers load them from env off-camera. If a secret leaks into a frame, <b>delete that clip immediately</b> + re-record.</li>
+<li><b>One clip per chunk</b> (<code>chunk-01-status.mp4</code>, …) in <code>docs/recording/</code>. ffmpeg stitches them at the end.</li>
+<li><b>System audio OFF.</b> Voiceover is recorded separately. The phone notification sound in chunk 4 is nice-to-have, not required.</li>
+</ul>
+
+<h2 id="pre">Pre-flight <span class="small" style="margin-left:auto">do once, before chunk 1</span></h2>
+<div class="cmd"><span class="c"># repo head + tests green (counts updated to the C1 commit)</span>
+cd ~/local-dev/RECTOR-LABS/zeroclaw-plugins
+git log --oneline -1            <span class="c"># expect: c81ccdd  feat(depin-attest): T2 demo driver…</span>
+cd plugins/depin-rewards
+cargo test <span class="k">--features</span> demo      <span class="c"># MUST be 52 passed (49 core + 3 demo)</span>
+cargo clippy <span class="k">--features</span> demo --all-targets -- -D warnings   <span class="c"># MUST be clean</span>
+cd ../depin-attest
+cargo test <span class="k">--features</span> demo      <span class="c"># MUST be 74 passed (68 core + 6 demo)</span>
+cargo clippy <span class="k">--features</span> demo --all-targets -- -D warnings   <span class="c"># MUST be clean</span>
+
+<span class="c"># Relay live + Capybara offline (the hero)</span>
+source ~/Documents/secret/zeroclaw-solana/.env
+curl -s -H <span class="pr">"Authorization: Bearer $RELAY_API_KEY"</span> \
+  "https://api.relaywireless.com/v1/helium/l2/hotspots/11bUUcCTeMYS4iqtf7DoQAEvmwswsZBSRc3Nt53aBQZ2ZYG8346" \
+  | jq '.iot_info.is_active'    <span class="c"># MUST print false</span></div>
+<ul class="chk">
+<li>Terminal: dark theme, font ≥ 16, 1920×1080 (or 1440p), 30fps, sys audio OFF.</li>
+<li>Phone: Telegram open to the bot chat, notifications ON + sound, screen unlocked.</li>
+<li>Chrome: dark mode, <code>explorer.solana.com</code> open.</li>
+<li>macOS Do Not Disturb ON; Slack/Discord/email closed.</li>
+<li>Telegram bot sends you a test message (then delete it) to confirm notifications fire.</li>
+</ul>
+<div class="note"><b>If any pre-flight item fails → STOP, fix, then record.</b> Don't record against a broken setup.</div>
+
+<h2><span class="n">1</span> Cold open + wiring <span class="badge">~20s</span></h2>
+<div class="chunk">
+<h3>Setup before hitting record</h3>
+<ul class="chk">
+<li>Open <code>https://github.com/RECTOR-LABS/palinurus</code> in Chrome (dark mode).</li>
+<li>Scroll to the <b>very top</b> — the <code>🦞 Palinurus</code> title at the top of the viewport.</li>
+<li>Optional: <span class="kbd">⌘+</span> once (to 110–125%) if the wiring-diagram column labels look small — only if the full diagram still fits the viewport width. If zooming overflows horizontally, stay at 100%.</li>
+<li>No cursor movement until 0:08. Do Not Disturb ON.</li>
+</ul>
+
+<h3>Shot-by-shot (20s total, 5 segments)</h3>
+<table>
+<tr><th>Time</th><th>Dur</th><th>What's on screen</th><th>Action</th></tr>
+<tr><td><b>0.0→3.0</b></td><td>3s</td><td><code>🦞 Palinurus</code> title + tagline <i>“The Solana DePIN node that talks…”</i></td><td><b>Hold static.</b> Let the brand + tagline land. Don't move the cursor.</td></tr>
+<tr><td><b>3.0→6.0</b></td><td>3s</td><td>Scroll down → the italic thesis (<i>“$40 Raspberry Pi…”</i>) + the <b>7 badges</b></td><td><b>Slow scroll</b> (mouse wheel, ~1 notch/sec) to reveal thesis + badges. Hold ~1s on badges so “212 host tests” + “mainnet T2 verified” read clearly.</td></tr>
+<tr><td><b>6.0→8.0</b></td><td>2s</td><td>Wiring-diagram title appears (<i>“physical edge → ZeroClaw agent → Solana”</i>)</td><td><b>Continue slow scroll</b> until the <b>full wiring diagram</b> is framed (all 5 column labels visible across the top: PHYSICAL EDGE · AGENT RUNTIME · PLUGINS · EXTERNAL APIs · SOLANA).</td></tr>
+<tr><td><b>8.0→18.0</b></td><td>10s</td><td>The full wiring diagram (5 columns, left→right)</td><td><b>Hold the diagram still. Move only the cursor</b>, tracing left→right across the 5 columns at ~2s each: <b>Physical Edge</b> (Pi 4) → <b>Agent Runtime</b> (ZeroClaw SOP/LLM) → <b>Plugins</b> (depin-attest · depin-rewards) → <b>External APIs</b> (Relay · Telegram) → <b>Solana</b> (SAS + lazy-distributor). Don't scroll, don't click — just guide the eye with the cursor.</td></tr>
+<tr><td><b>18.0→20.0</b></td><td>2s</td><td>End resting on the <b>Solana</b> column (the destination/chain)</td><td><b>Hold static</b> on Solana for 2s — the “everything flows to the chain” beat. Cut.</td></tr>
+</table>
+
+<h3>What to capture (the rules)</h3>
+<ul class="chk">
+<li><b>Frame = the GitHub hero only.</b> Title → thesis → badges → wiring diagram. That's it.</li>
+<li><b>Do NOT scroll past the wiring diagram.</b> Below it is <code>## Live on mainnet</code> with the terminal + mainnet explorer screenshots — that <b>spoils chunk 6</b>. If you scroll too far, re-record.</li>
+<li><b>Smooth + slow.</b> No jerky scrolls, no clicking, no zooming mid-take. The cursor trace across the diagram is the only movement — keep it glacial.</li>
+<li><b>No voiceover now</b> — screen only; CIPHER adds the VO (guide §5 chunk 1) in post, timed to this 20s.</li>
+<li><b>Dark mode</b> (so the dark-styled diagram looks right).</li>
+</ul>
+
+<h3>Send CIPHER: <code>docs/recording/chunk-01-wiring.mp4</code></h3>
+<h3>CIPHER verifies</h3>
+<ul class="chk">
+<li>Title legible ≥ 2s.</li>
+<li>Badges legible (“212 host tests” + “mainnet T2 verified” readable).</li>
+<li>All 5 diagram columns legible at some point during the cursor trace.</li>
+<li><b>No spoilers</b> — the mainnet screenshots did NOT appear in frame.</li>
+<li>Clean frame (no notifications, no other windows).</li>
+</ul>
+</div>
+
+<h2><span class="n">2</span> status — Capybara is offline <span class="badge">~20s</span></h2>
+<div class="chunk">
+<h3>Run / capture</h3>
+<div class="cmd"><span class="pr">clear</span>
+cd ~/local-dev/RECTOR-LABS/zeroclaw-plugins/plugins/depin-rewards
+source ~/Documents/secret/zeroclaw-solana/.env   <span class="c"># off-camera; do NOT show the key</span>
+cargo run <span class="k">--features</span> demo --bin palinurus-demo -- status</div>
+<p class="small">Expected shape: <code>✓ Fit Pine Capybara — OFFLINE (iot) · owner 99Yu…ZCUm · maker SenseCAP</code>.</p>
+<h3>Send CIPHER: <code>docs/recording/chunk-02-status.mp4</code></h3>
+<h3>CIPHER verifies</h3>
+<ul class="chk">
+<li>Hotspot name <b>Fit Pine Capybara</b> + the <b>OFFLINE</b> state visible.</li>
+<li>Output matches the README worked-example shape.</li>
+<li><b>No secret on screen</b> — the <code>source .env</code> line must NOT be in frame (run it off-camera, or <code>clear</code> after sourcing).</li>
+<li>Font legible at 1×.</li>
+</ul>
+</div>
+
+<h2><span class="n">3</span> summary — 0.02 HNT earned <span class="badge">~25s</span></h2>
+<div class="chunk">
+<h3>Run / capture</h3>
+<div class="cmd"><span class="pr">clear</span>
+cargo run <span class="k">--features</span> demo --bin palinurus-demo -- summary</div>
+<p class="small">Expected: total reads <b>0.02 HNT</b> (≈0.02059069), <code>beacon</code> + <code>witness</code> non-zero, owner short-address.</p>
+<h3>Send CIPHER: <code>docs/recording/chunk-03-summary.mp4</code></h3>
+<h3>CIPHER verifies</h3>
+<ul class="chk">
+<li>Total reads <b>0.02 HNT</b> (the hero number — must be visible).</li>
+<li><code>beacon</code> + <code>witness</code> breakdown shown + non-zero.</li>
+<li>Owner short-address visible.</li>
+<li>No secret; clean frame; legible.</li>
+</ul>
+</div>
+
+<h2><span class="n">4</span> watch → the Telegram alert <span class="badge b-red">MONEY SHOT · ~25s</span></h2>
+<div class="chunk hot">
+<h3>Run / capture</h3>
+<div class="cmd"><span class="pr">clear</span>
+<span class="c"># watch fires the real alert. prev_active=true forces the offline-flip detection.</span>
+cargo run <span class="k">--features</span> demo --bin palinurus-demo -- watch</div>
+<p class="small">Terminal prints <code>alert(s) sent: offline-alert</code>. <b>Cut to the phone</b> (one continuous clip): the real Telegram notification drops in with the hotspot name + "went OFFLINE".</p>
+<h3>Send CIPHER: <code>docs/recording/chunk-04-watch.mp4</code></h3>
+<h3 style="color:var(--red)">CIPHER verifies — non-negotiable</h3>
+<ul class="chk">
+<li><b>The phone actually receives the Telegram message</b> with the hotspot name + offline alert. If it doesn't ping → FAIL → re-record.</li>
+<li>Terminal shows <code>alert(s) sent: offline-alert</code>.</li>
+<li>Notification sound fires (nice-to-have; sys audio can be off).</li>
+<li>No secret; the bot token is NOT visible anywhere.</li>
+</ul>
+<div class="note">Tip if it won't land: send a manual test message first to confirm notifications, delete it, then roll.</div>
+</div>
+
+<h2><span class="n">5</span> custody one-liner <span class="badge">~10s</span></h2>
+<div class="chunk">
+<h3>Run / capture</h3>
+<div class="cmd"><span class="pr">clear</span>
+<span class="c"># Option A (test-backed): run the no-signing invariant test</span>
+cargo test <span class="k">--features</span> demo no_signing_capability_in_crate -- --nocapture
+<span class="c"># Option B (cleaner on screen): show the README custody table (scroll to it in the browser)</span></div>
+<h3>Send CIPHER: <code>docs/recording/chunk-05-custody.mp4</code></h3>
+<h3>CIPHER verifies</h3>
+<ul class="chk">
+<li>The "no signing key anywhere in the crate" assertion is visible (test passes, or table legible).</li>
+<li>Custody tiers (T0/T1/T2) readable.</li>
+<li>No secret; clean frame.</li>
+</ul>
+</div>
+
+<h2><span class="n">6</span> depin-attest — real on-chain attestation <span class="badge b-grn">KILLER BEAT · ~35s</span></h2>
+<div class="chunk hot">
+<div class="note"><b>Updated from the original guide.</b> This is the <b>T2 path</b> — the agent SIGNS + SUBMITS a real attestation to devnet. Far more compelling than the T1 unsigned draft: you land a real confirmed tx on camera + open it in the explorer. This is the beat none of the 3 competitors can show.</div>
+<h3>Run / capture</h3>
+<div class="cmd"><span class="pr">clear</span>
+cd ~/local-dev/RECTOR-LABS/zeroclaw-plugins/plugins/depin-attest
+<span class="c"># off-camera: the keypair path is secret-adjacent; don't show the file contents.</span>
+ATTEST_MODE=t2 ATTEST_MEMO_FALLBACK=true \
+ATTEST_SESSION_KEYFILE=~/Documents/secret/solana-devnet.json \
+cargo run <span class="k">--features</span> demo --bin depin-attest-demo</div>
+<p class="small">Terminal prints <code>✓ attested + submitted</code>, the <b>signature</b>, the explorer link, and <code>✅ real on-chain attestation</code>. <b>Wait ~6 seconds</b> (let the tx finalize — not instant), then <b>open the explorer link</b> in Chrome. The page shows <b>Success / Finalized</b>. Scroll so signature + Status + Memo + System program accounts are visible.</p>
+<h3>Send CIPHER: <code>docs/recording/chunk-06-attest.mp4</code></h3>
+<h3>CIPHER verifies</h3>
+<ul class="chk">
+<li>Command + <code>✓ attested + submitted</code> + signature + <code>✅ real on-chain attestation</code> visible.</li>
+<li><b>Explorer shows Success / Finalized</b> for the same signature the terminal printed (if "Not found", you didn't wait long enough; re-record + wait ~8s before opening).</li>
+<li>Memo Program + System Program accounts visible (proves memo + durable-nonce tx).</li>
+<li>No secret: the keypair <b>file contents</b> must never appear (the command shows the <i>path</i>, which is fine; do not <code>cat</code> the keypair).</li>
+<li>Reading simulated (bme280-1=24.7) — expected + honest; the Solana side is 100% real.</li>
+<li>Font legible; explorer in dark mode.</li>
+</ul>
+<div class="note"><b>Multiple takes:</b> each T2 run is a REAL new devnet tx (advances the nonce, costs ~0.000005 SOL; wallet has 5.24 SOL). Don't be shy about re-rolling for a clean take.</div>
+</div>
+
+<h2><span class="n">7</span> close + CTA <span class="badge">~15s</span></h2>
+<div class="chunk">
+<h3>Run / capture</h3>
+<div class="cmd"><span class="pr">clear</span>
+<span class="c"># show in terminal or browser:</span>
+<span class="c">#   github.com/zeroclaw-labs/zeroclaw-plugins/pull/76</span>
+<span class="c">#   palinurus.rectorspace.com</span></div>
+<p class="small">Hold the PR link + site link legibly for ≥ 2s each.</p>
+<h3>Send CIPHER: <code>docs/recording/chunk-07-close.mp4</code></h3>
+<h3>CIPHER verifies</h3>
+<ul class="chk">
+<li>Both links legible at 1×, held ≥ 2s.</li>
+<li>No secret; clean frame.</li>
+</ul>
+</div>
+
+<h2>After all 7 chunks PASS</h2>
+<div class="chunk">
+<ol style="padding-left:18px;line-height:1.8">
+<li><b>CIPHER generates the ElevenLabs voiceover per-chunk</b> using guide §5, timed to each chunk's real duration. Voice: warm mid-range male (Adam/Antoni), stability ~55, similarity ~75, style ~20.</li>
+<li><b>CIPHER compiles via ffmpeg</b> (guide §6): concat the 7 chunks + mux the per-chunk VO → <code>palinurus-demo.mp4</code> ≤ 3:00.</li>
+<li><b>Final QC</b> (CIPHER, then you sign off): ≤ 3:00 · audio peaks ~−6 dB no clipping · no secret in any frame (scrub at 0.25×) · chunk 4 phone alert aligns with the VO "real message on a real phone" line · chunk 7 links held ≥ 2s.</li>
+<li><b>Upload</b> (YouTube unlisted or Superteam-accepted host) → grab the URL.</li>
+<li><b>Post F1 (Discord) + F2 (X)</b> with the PR + mainnet proof + the demo video embedded.</li>
+<li><b>Submit on Superteam Earn</b> (PR #76 = submission link, video URL = required, optional one-pager).</li>
+<li><b>Embed the video on the marketing site</b> + redeploy.</li>
+</ol>
+</div>
+
+<div class="gate">
+<h3>The 4 gates — what CIPHER checks on every chunk</h3>
+<ol>
+<li><b>Legibility</b> — every terminal line readable at 1×. (Else: bigger font, re-record.)</li>
+<li><b>No secrets</b> — Relay key, Telegram token, Solana keypair contents never on screen. (Else: delete clip, re-record.)</li>
+<li><b>The beat landed</b> — the chunk-specific checklist item happened.</li>
+<li><b>Clean frame</b> — <code>clear</code> between chunks, no notifications, no scrollback bleed.</li>
+</ol>
+<p class="small" style="margin-top:8px"><b style="color:var(--red)">Chunk 4</b> (Telegram alert) + <b style="color:var(--grn)">chunk 6</b> (explorer Confirmed) are the two non-negotiable beats. Everything else is polish.</p>
+</div>
+
+</div>
+</body></html>

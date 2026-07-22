@@ -10,7 +10,7 @@
 [![Custody](https://img.shields.io/badge/custody-T0_·_T1_·_T2-0969da)](#safety--custody)
 [![Tests](https://img.shields.io/badge/tests-212_host-brightgreen)](#code-quality)
 [![crates.io](https://img.shields.io/crates/v/palinurus-core?label=palinurus%20core&color=orange)](https://crates.io/crates/palinurus-core)
-[![devnet](https://img.shields.io/badge/devnet-T2_verified-brightgreen)](#live-on-devnet)
+[![mainnet](https://img.shields.io/badge/mainnet-T2_verified-brightgreen)](#live-on-mainnet)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![site](https://img.shields.io/badge/site-live-blue)](https://palinurus.rectorspace.com)
 
@@ -44,8 +44,8 @@ A judge should be able to score each criterion without hunting. The body is orde
 
 | Criterion | Weight | One-line evidence | Section |
 |---|---:|---|---|
-| **Real utility** | 30% | `depin-rewards` = the daily-use plugin a stranger runs for months (no hardware, real Capybara alerts); `depin-attest` = reference impl **verified live on devnet**; `claim_tx` deferred honestly, not faked | [→ Real utility](#real-utility) |
-| **Safety & custody** | 25% | Full **T0 + T1 + T2** custody tiers; **4-vector fail-closed** prompt-injection transcripts (test-backed, both plugins); **no signing key anywhere** in `depin-rewards` (a test asserts it); devnet T2 guards enforced **before signing** | [→ Safety & custody](#safety--custody) |
+| **Real utility** | 30% | `depin-rewards` = the daily-use plugin a stranger runs for months (no hardware, real Capybara alerts); `depin-attest` = reference impl **verified live on mainnet**; `claim_tx` deferred honestly, not faked | [→ Real utility](#real-utility) |
+| **Safety & custody** | 25% | Full **T0 + T1 + T2** custody tiers; **4-vector fail-closed** prompt-injection transcripts (test-backed, both plugins); **no signing key anywhere** in `depin-rewards` (a test asserts it); T2 guards enforced **before signing** (mainnet-proven) | [→ Safety & custody](#safety--custody) |
 | **Code quality** | 20% | Pure-core / thin-shim split; **212 host tests** (71 core + 83 attest + 58 rewards); `palinurus-core` **published on crates.io**; TS oracle byte-for-byte cross-checks; `clippy -D warnings` + `wasm32-wasip2` clean (both crates, both modes) | [→ Code quality](#code-quality) |
 | **Merge-readiness** | 15% | Matches `redact-text` layout; minimal permissions (`http_client` + `config_read`); v0.1.0 semver, kebab names; **both WIT shims wired** (incl. the `depin-rewards` `execute()` dispatch fix — was a stub, now routes to the pure core + `WakiHttp`); crates.io dep (no fork URL) | [→ Merge-readiness](#merge-readiness) |
 | **Demo & docs** | 10% | 3 screenshots (explorer tx + terminal T2 + marketing site); wiring diagram (SVG); recording guide + chunk-by-chunk walkthrough; **live marketing site**; one-command demo drivers | [→ Demo & docs](#demo--docs) |
@@ -82,9 +82,9 @@ The *"stranger installs this and runs it for a month"* plugin. Watches **any pub
 
 > **Live-verified:** the rewards path ran against the real Relay API on the free Community tier and surfaced + fixed **3 real bugs** the mocked tests couldn't catch (see `depin-rewards` README). The demo shows **0.02 HNT** earned by the Capybara test hotspot over a real window.
 
-### `depin-attest` — the reference impl, verified on devnet
+### `depin-attest` — the reference impl, verified on mainnet
 
-A \$40 Pi running ZeroClaw becomes a Solana-attesting DePIN node: the agent takes a sensor reading, the plugin builds a versioned tx with a [Solana Attestation Service](https://attest.solana.com/) `create_attestation` (or memo fallback) + a **durable nonce** (the blockhash-expiry fix — a queued tx doesn't die), and returns a ~200-token summary. **T1 default** (unsigned — a human/multisig signs) + **T2 opt-in** (scoped session key). The T2 path is **verified live on devnet** — a real, explorer-verifiable on-chain attestation. See [Live on devnet](#live-on-devnet) below (it's also Safety evidence — the custody guards fired pre-sign on a real submission).
+A \$40 Pi running ZeroClaw becomes a Solana-attesting DePIN node: the agent takes a sensor reading, the plugin builds a versioned tx with a [Solana Attestation Service](https://attest.solana.com/) `create_attestation` (or memo fallback) + a **durable nonce** (the blockhash-expiry fix — a queued tx doesn't die), and returns a ~200-token summary. **T1 default** (unsigned — a human/multisig signs) + **T2 opt-in** (scoped session key). The T2 path is **verified live on mainnet** — a real, explorer-verifiable on-chain attestation paying real fees. See [Live on mainnet](#live-on-mainnet) below (it's also Safety evidence — the custody guards fired pre-sign on a real submission).
 
 > A stream of signed attestations from a stable key *is* an oracle feed — the `depin-attest` README documents how to consume the attestation stream as an oracle, rather than shipping a separate `oracle-publish` component. **Depth over breadth**, per the bounty's guidance.
 
@@ -92,7 +92,7 @@ A \$40 Pi running ZeroClaw becomes a Solana-attesting DePIN node: the agent take
 
 | Plugin | Reads (T0) | Unsigned tx (T1) | Autonomous sign (T2) |
 |---|---|---|---|
-| `depin-attest` | — | ✅ durable-nonce attestation | ✅ opt-in, scoped session key, allowlist + caps — **verified on devnet** |
+| `depin-attest` | — | ✅ durable-nonce attestation | ✅ opt-in, scoped session key, allowlist + caps — **verified on mainnet** |
 | `depin-rewards` | ✅ Relay + Telegram | 📋 unsigned claim tx (design documented, deferred) | ❌ never (claim moves value → multisig) |
 
 The agent never holds a main wallet key. Pattern: *agent proposes, multisig disposes.*
@@ -118,7 +118,7 @@ Custody is treated as a first-class engineering problem — the thesis is that a
 
 **Worst-case blast radius of a prompt injection:** Telegram spam to the *configured* chat (rate-limited by `watch` cadence) or a claim tx drafted for the *configured* hotspot's *own* owner. Nuisance, not theft.
 
-### `depin-attest` — full T2 guards, fail-closed, proven on devnet
+### `depin-attest` — full T2 guards, fail-closed, proven on mainnet
 
 T2 autonomous signing is the brutal bar: *if a judge can prompt-inject the agent into draining the session key → zero on safety regardless of code quality.* The T2 path enforces, **before signing**:
 
@@ -129,21 +129,27 @@ T2 autonomous signing is the brutal bar: *if a judge can prompt-inject the agent
 
 Four attack vectors, four rejections (full transcript in the `depin-attest` README): memo-encoded "transfer 1 SOL" (inert — no transfer code path) · injected SPL Token ix (fail closed — not in allowlist) · "print the session key" (key never serialized into any output; `Debug` redacted) · daily-cap bypass via timestamp rolling (fail closed at cap+1; rolled timestamps produce different attestation PDAs — natural dedup).
 
-### Live on devnet — the T2 proof (also Real-utility evidence)
+### Live on mainnet — the T2 proof (also Real-utility evidence)
 
-The `depin-attest` T2 custody path is **verified on Solana devnet** — a real, explorer-verifiable attestation, not an unsigned draft. This is the **only on-chain-verified entry** in the Track-C field.
+The `depin-attest` T2 custody path is **verified on Solana mainnet** — a real, explorer-verifiable attestation paying real fees, not an unsigned draft. This is the **only on-chain-verified entry** in the Track-C field — and the only one proven on **mainnet** (no `?cluster=devnet` in the URL).
 
-<p align="center"><em>The T2 demo driver — signs + submits on camera:</em></p>
+<p align="center"><em>The confirmed mainnet transaction — Success · Finalized · Mainnet Beta:</em></p>
 
-<img src="docs/screenshots/terminal-t2-attestation.png" alt="Terminal: depin-attest T2 demo driver output — real signature + explorer link" width="88%"/>
+<img src="docs/screenshots/mainnet-attestation-explorer.png" alt="Solana explorer: confirmed MAINNET attestation — Finalized, Mainnet Beta" width="88%"/>
 
-<p align="center"><em>The confirmed transaction on Solana explorer (Success · Finalized):</em></p>
+<p align="center"><em>Programs & Logs — the attestation memo committed on-chain (Advance Nonce + Memo):</em></p>
 
-<img src="docs/screenshots/devnet-attestation-explorer.png" alt="Solana explorer: confirmed devnet attestation — Success, Finalized" width="88%"/>
+<img src="docs/screenshots/mainnet-attestation-explorer-logs.png" alt="Solana explorer Programs & Logs: Advance Nonce Account + Memo 'palinurus: bme280-1=24.7celsius @ 1784707747'" width="88%"/>
 
-- tx [`BsdBnMtJ…2qGYo`](https://explorer.solana.com/tx/BsdBnMtJHFarDREDdA7hgbGp2hUe4mBMzw4erjM9jrVhQdRyS4yQxtTpCEtobrxjiCj5zKMHMuwVKPd2Pv2qGYo?cluster=devnet) · **Success / Finalized** · slot `477808575` · fee `0.000005` SOL · version `0` (versioned tx → durable nonce)
-- durable nonce advanced on this run (replay guard live) · reading committed on-chain as a memo: `palinurus: bme280-1=24.7celsius @ 1784621332`
-- custody guards enforced **before signing**: session-key identity · program allowlist `{System, SAS, Memo}` · lamport cap · daily cap
+- tx [`YZTS16nN…3G9TC`](https://explorer.solana.com/tx/YZTS16nNNrDhLhFHCtSMhcYTYAkcYQvPn2QUWfWvkw4bJxif77d1Ww36o3c4LYe6r69NAzYNJLDpz93DjR3G9TC) · **Success / Finalized** · slot `434472270` · fee `0.000005` SOL · version `0` (versioned tx → durable nonce) · **Mainnet Beta**
+- durable nonce advanced on this run (`BXANchUJ…rbsP` → `HyV7X374…bCMZf` — replay guard live) · reading committed on-chain as a memo: `palinurus: bme280-1=24.7celsius @ 1784707747`
+- custody guards enforced **before signing**: session-key identity (signer `DZdeez…7RRC` = authority = payer = nonce_authority) · program allowlist `{System, SAS, Memo}` (the only System ix is `AdvanceNonceAccount` — value transfer is unexpressible) · lamport cap · daily cap
+
+> **Devnet worked-example + on-camera demo.** The same T2 path also landed on **devnet** — tx [`BsdBnMtJ…2qGYo`](https://explorer.solana.com/tx/BsdBnMtJHFarDREDdA7hgbGp2hUe4mBMzw4erjM9jrVhQdRyS4yQxtTpCEtobrxjiCj5zKMHMuwVKPd2Pv2qGYo?cluster=devnet) (slot `477808575`, memo `palinurus: bme280-1=24.7celsius @ 1784621332`). The recording's chunk-6 demo runs the T2 driver live on devnet against the shared devnet wallet — the on-camera beat a judge watches:
+>
+> <img src="docs/screenshots/terminal-t2-attestation.png" alt="Terminal: depin-attest T2 demo driver output — real signature + explorer link" width="80%"/>
+
+The mainnet tx above is the proof a judge verifies directly.
 
 > **SAS vs memo path.** The default is the **memo program** (cheap, high-throughput — the landed proof above). The **SAS** path (`create_attestation`, verifiable + credential-bound) builds the instruction + derives the PDA, but on-chain landing is blocked on schema creation (SAS `0x4` — a stale-arg issue against `sas-lib@1.0.10`'s `getCreateSchemaInstruction`; the credential creates cleanly). SAS ix + PDA are tested + cross-checked via TS oracles. On-chain SAS landing is the next milestone.
 
@@ -164,7 +170,7 @@ The T2 autonomous-sign path is money-critical, so it gets an auditor-grade revie
 | F3 — daily cap is a rate-hint, not a guard (timestamp-rollable) | ✅ Disclosure sharpened; on-chain counter PDA roadmaped |
 | F7 — unreachable `expect()` panics | ✅ Accepted w/ rationale (infallible); core `Result` variant roadmaped |
 
-Plus 6 passing notes (signing correctness **devnet-confirmed**, identity guard pre-sign, durable-nonce replay guard, input validation, redacted `Debug`, signed-tx never surfaced to the LLM). **83 attest tests** (was 78; +5 audit-driven), clippy + wasm clean.
+Plus 6 passing notes (signing correctness **mainnet-confirmed**, identity guard pre-sign, durable-nonce replay guard, input validation, redacted `Debug`, signed-tx never surfaced to the LLM). **83 attest tests** (was 78; +5 audit-driven), clippy + wasm clean.
 
 ---
 
@@ -207,11 +213,11 @@ Plus 6 passing notes (signing correctness **devnet-confirmed**, identity guard p
 
 ### Screenshots (3)
 
-| Terminal: T2 demo driver | Explorer: confirmed devnet tx | Marketing site |
+| Terminal: T2 demo driver | Explorer: confirmed mainnet tx | Marketing site |
 |---|---|---|
 | signs + submits on camera | Success · Finalized | palinurus.rectorspace.com |
 
-See them inline above ([Live on devnet](#live-on-devnet)) and in the [Marketing site](#marketing-site) section.
+See them inline above ([Live on mainnet](#live-on-mainnet)) and in the [Marketing site](#marketing-site) section.
 
 ### Wiring diagram
 

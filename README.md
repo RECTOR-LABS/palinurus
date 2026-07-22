@@ -56,6 +56,7 @@ A judge should be able to score each criterion without hunting. The body is orde
 
 - [Real utility (30%)](#real-utility) — would a stranger install this and run it for a month?
 - [Safety & custody (25%)](#safety--custody) — can we prompt-inject it? Fail closed? Tier honest?
+- [Security audit](#security-audit) — auditor-grade review of the T2 path (no critical vuln; closed loop)
 - [Code quality (20%)](#code-quality) — pure core, real tests, clean shim, idiomatic Rust
 - [Merge-readiness (15%)](#merge-readiness) — could upstream merge it today?
 - [Demo & docs (10%)](#demo--docs) — understand and run in 5 minutes?
@@ -145,6 +146,25 @@ The `depin-attest` T2 custody path is **verified on Solana devnet** — a real, 
 - custody guards enforced **before signing**: session-key identity · program allowlist `{System, SAS, Memo}` · lamport cap · daily cap
 
 > **SAS vs memo path.** The default is the **memo program** (cheap, high-throughput — the landed proof above). The **SAS** path (`create_attestation`, verifiable + credential-bound) builds the instruction + derives the PDA, but on-chain landing is blocked on schema creation (SAS `0x4` — a stale-arg issue against `sas-lib@1.0.10`'s `getCreateSchemaInstruction`; the credential creates cleanly). SAS ix + PDA are tested + cross-checked via TS oracles. On-chain SAS landing is the next milestone.
+
+---
+
+## Security audit
+
+The T2 autonomous-sign path is money-critical, so it gets an auditor-grade review — not just claims. The full report: [`docs/security-audit.md`](docs/security-audit.md) (read-only, cite `file:line` for every finding, skeptical posture; methodology adapted from our [`solana-cpi-safety-skill`](https://github.com/RECTOR-LABS/solana-cpi-safety-skill) auditor).
+
+**Result: no critical vulnerability.** The one foundational trust assumption — that the host injects the plugin's `__config` and strips any LLM-supplied one — is **confirmed safe by the ZeroClaw host contract** (`zeroclaw/crates/zeroclaw-plugins/src/runtime.rs:157-168`: `obj.remove("__config")` then re-inject the trusted config; host-tested). Every other finding was followed up (a closed audit loop):
+
+| Finding | Disposition |
+|---|---|
+| F2 — System allowlist was program-level (a `System::Transfer` could pass the guard) | ✅ Hardened to **instruction-level** — only `AdvanceNonceAccount` (disc `0x04`); value transfer is now unexpressible at the *guard* |
+| F5 — unbounded memo length | ✅ Capped at 566 B, validated before any tx build |
+| F6 — nonce account owner unchecked | ✅ `owner == System` verified before parse |
+| F4 — session key not zeroized | ✅ Raw key bytes zeroized after `SigningKey::from_bytes` |
+| F3 — daily cap is a rate-hint, not a guard (timestamp-rollable) | ✅ Disclosure sharpened; on-chain counter PDA roadmaped |
+| F7 — unreachable `expect()` panics | ✅ Accepted w/ rationale (infallible); core `Result` variant roadmaped |
+
+Plus 6 passing notes (signing correctness **devnet-confirmed**, identity guard pre-sign, durable-nonce replay guard, input validation, redacted `Debug`, signed-tx never surfaced to the LLM). **83 attest tests** (was 78; +5 audit-driven), clippy + wasm clean.
 
 ---
 

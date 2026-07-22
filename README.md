@@ -28,6 +28,16 @@ Palinurus is a suite of Solana-native tool plugins for [ZeroClaw](https://github
 
 ---
 
+## Why — the problem Palinurus solves
+
+**ZeroClaw is already a DePIN device — it just has no chain.** It runs on a \$40 Raspberry Pi with GPIO/I2C/SPI and an SOP engine triggered by MQTT and by peripherals. That's a node at the physical edge. What's missing is the *navigator*: something that takes a reading and commits a verifiable attestation back to Solana — turning a Pi into a chain-reporting device.
+
+**The hard part isn't signing — it's signing *safely*.** The naive design hands the agent a private key and lets the LLM decide what to sign. But an agent with a private key and an LLM in the loop *is a hot wallet with a prompt-injection surface* — one crafted message away from draining itself. The real engineering question is whether the agent can act on-chain at all while *guaranteed* failing closed under injection, never moving value it shouldn't, and never exposing a main key.
+
+**Palinurus treats custody as a first-class engineering problem.** The agent proposes; a human or Squads multisig disposes; and signing, when it happens at all, is scoped to a session key holding cents and constrained to a strict program allowlist. Two plugins cover the two faces of DePIN on Solana — *attesting* (the edge reports to the chain) and *reward-watching* (the chain reports back to the owner) — on a shared `wasm32-wasip2` substrate.
+
+---
+
 ## How this maps to the judging rubric
 
 A judge should be able to score each criterion without hunting. The body is ordered by rubric weight.

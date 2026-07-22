@@ -1,24 +1,14 @@
 <div align="center">
 
-# 🦞 Palinurus
-
-**The Solana DePIN node that talks.** A navigator at the physical edge, attesting back to the chain.
-
-*A ZeroClaw agent on a \$40 Raspberry Pi becomes a Solana-attesting, reward-watching DePIN node — the agent proposes, a human/Squads multisig disposes, no main key ever leaves the cold path.*
+<img src="assets/palinurus-banner.svg" alt="Palinurus — the Solana DePIN node that talks. Edge node → signal → chain." width="100%"/>
 
 [![Track](https://img.shields.io/badge/Track-C_·_DePIN-6f42c1)](https://superteam.fun/earn/listing/zeroclaw)
-[![Custody](https://img.shields.io/badge/custody-T0_·_T1_·_T2-0969da)](#safety--custody)
-[![Tests](https://img.shields.io/badge/tests-212_host-brightgreen)](#code-quality)
+[![Custody](https://img.shields.io/badge/custody-T0_·_T1_·_T2-0969da)](#custody)
+[![Tests](https://img.shields.io/badge/tests-212_host-brightgreen)](#architecture)
 [![crates.io](https://img.shields.io/crates/v/palinurus-core?label=palinurus%20core&color=orange)](https://crates.io/crates/palinurus-core)
-[![mainnet](https://img.shields.io/badge/mainnet-T2_verified-brightgreen)](#live-on-mainnet)
+[![mainnet](https://img.shields.io/badge/mainnet-T2_verified-brightgreen)](#proven-on-mainnet)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![site](https://img.shields.io/badge/site-live-blue)](https://palinurus.rectorspace.com)
-
-</div>
-
-<div align="center">
-
-<img src="docs/wiring-diagram.svg" alt="Palinurus wiring: physical edge → ZeroClaw agent → Solana, custody tiers + cold signing path" width="100%"/>
 
 </div>
 
@@ -26,9 +16,22 @@
 
 Palinurus is a suite of Solana-native tool plugins for [ZeroClaw](https://github.com/zeroclaw-labs/zeroclaw) — the self-hosted, Rust-based AI agent runtime (32k ⭐) — built as `wasm32-wasip2` WIT components against the ZeroClaw plugin contract. It brings real Solana capability to an autonomous agent that runs on your own hardware, with your own keys.
 
+## Table of contents
+
+- [The problem](#the-problem)
+- [The solution](#the-solution)
+- [Proven on mainnet](#proven-on-mainnet) — a real, explorer-verifiable attestation
+- [Security audit](#security-audit) — auditor-grade review of the T2 path
+- [Custody](#custody) — T0/T1/T2, fail-closed under prompt injection
+- [Architecture](#architecture) — pure core, thin shim, 212 tests, crates.io
+- [Build & test](#build--test)
+- [Demo & docs](#demo--docs) — screenshots, wiring, demo drivers, site
+- [Roadmap](#roadmap)
+- [License](#license)
+
 ---
 
-## Why — the problem Palinurus solves
+## The problem
 
 **ZeroClaw is already a DePIN device — it just has no chain.** It runs on a \$40 Raspberry Pi with GPIO/I2C/SPI and an SOP engine triggered by MQTT and by peripherals. That's a node at the physical edge. What's missing is the *navigator*: something that takes a reading and commits a verifiable attestation back to Solana — turning a Pi into a chain-reporting device.
 
@@ -38,55 +41,21 @@ Palinurus is a suite of Solana-native tool plugins for [ZeroClaw](https://github
 
 ---
 
-## How this maps to the judging rubric
+## The solution
 
-A judge should be able to score each criterion without hunting. The body is ordered by rubric weight.
+Two plugins, not one — and a shared substrate that makes both safe to run on an autonomous agent.
 
-| Criterion | Weight | One-line evidence | Section |
-|---|---:|---|---|
-| **Real utility** | 30% | `depin-rewards` = the daily-use plugin a stranger runs for months (no hardware, real Capybara alerts); `depin-attest` = reference impl **verified live on mainnet**; `claim_tx` deferred honestly, not faked | [→ Real utility](#real-utility) |
-| **Safety & custody** | 25% | Full **T0 + T1 + T2** custody tiers; **4-vector fail-closed** prompt-injection transcripts (test-backed, both plugins); **no signing key anywhere** in `depin-rewards` (a test asserts it); T2 guards enforced **before signing** (mainnet-proven) | [→ Safety & custody](#safety--custody) |
-| **Code quality** | 20% | Pure-core / thin-shim split; **212 host tests** (71 core + 83 attest + 58 rewards); `palinurus-core` **published on crates.io**; TS oracle byte-for-byte cross-checks; `clippy -D warnings` + `wasm32-wasip2` clean (both crates, both modes) | [→ Code quality](#code-quality) |
-| **Merge-readiness** | 15% | Matches `redact-text` layout; minimal permissions (`http_client` + `config_read`); v0.1.0 semver, kebab names; **both WIT shims wired** (incl. the `depin-rewards` `execute()` dispatch fix — was a stub, now routes to the pure core + `WakiHttp`); crates.io dep (no fork URL) | [→ Merge-readiness](#merge-readiness) |
-| **Demo & docs** | 10% | 3 screenshots (explorer tx + terminal T2 + marketing site); wiring diagram (SVG); recording guide + chunk-by-chunk walkthrough; **live marketing site**; one-command demo drivers | [→ Demo & docs](#demo--docs) |
+<div align="center">
 
----
+<img src="docs/wiring-diagram.svg" alt="Palinurus wiring: physical edge → ZeroClaw agent → Solana, custody tiers + cold signing path" width="100%"/>
 
-## Table of contents
+</div>
 
-- [Real utility (30%)](#real-utility) — would a stranger install this and run it for a month?
-- [Safety & custody (25%)](#safety--custody) — can we prompt-inject it? Fail closed? Tier honest?
-- [Security audit](#security-audit) — auditor-grade review of the T2 path (no critical vuln; closed loop)
-- [Code quality (20%)](#code-quality) — pure core, real tests, clean shim, idiomatic Rust
-- [Merge-readiness (15%)](#merge-readiness) — could upstream merge it today?
-- [Demo & docs (10%)](#demo--docs) — understand and run in 5 minutes?
-- [Build & test](#build--test)
-- [License](#license)
+**`depin-attest`** turns a sensor reading into an on-chain [Solana Attestation Service](https://attest.solana.com/) attestation (or memo fallback), composed with a **durable nonce** (the blockhash-expiry fix — a queued tx doesn't die). **T1 default** (unsigned — a human/multisig signs) + **T2 opt-in** (scoped session key). The T2 path is **verified live on mainnet** — a real, explorer-verifiable on-chain attestation paying real fees (see [Proven on mainnet](#proven-on-mainnet)).
 
----
+**`depin-rewards`** watches a public Helium/Hivemapper-class hotspot (no ownership required) for online/offline flips + rewards and fires **real Telegram alerts**. **T0/T1 only — no signing key anywhere in the crate.** A stranger with a free Relay key + a free Telegram bot token is running it today — no Raspberry Pi, no hotspot ownership.
 
-## Real utility
-
-*Rubric: "Would a stranger install this and still be running it in a month?"*
-
-Two plugins, not one — and the second is the one a stranger actually installs daily.
-
-### `depin-rewards` — the daily-useful plugin (no hardware, no hotspot ownership)
-
-The *"stranger installs this and runs it for a month"* plugin. Watches **any public Helium/Hivemapper-class hotspot** via the public Relay API (Helium-Foundation-sponsored, free Community tier — within the bounty's granted "read access to any aggregator API") and fires **real Telegram alerts** the moment it goes dark. **No Raspberry Pi, no hotspot ownership required** — a stranger with a free Relay key + a free Telegram bot token is running it today.
-
-- ✅ `status` — hotspot online/offline + owner + location + maker now.
-- ✅ `summary` — daily rewards total + beacon/witness/dc breakdown (Relay reward-shares list endpoint, client-side sum — the `/totals` aggregate is 401-gated on the free tier; verified live).
-- ✅ `watch` — the cron workhorse: online→offline flips → instant Telegram alert + optional 08:00 daily rewards summary.
-- 📋 `claim_tx` — **deferred honestly, not faked.** Helium hotspots are compressed NFTs (cNFTs), so the correct claim ix is `distribute_compression_rewards_v0` + a DAS `get_asset_proof` merkle proof — not the regular `distribute_rewards_v0`. The design is verified (program id, PDAs, custody posture all documented in the plugin README); impl is the next focused milestone. We shipped the alerts core complete + correct rather than rush a half-verified claim tx.
-
-> **Live-verified:** the rewards path ran against the real Relay API on the free Community tier and surfaced + fixed **3 real bugs** the mocked tests couldn't catch (see `depin-rewards` README). The demo shows **0.02 HNT** earned by the Capybara test hotspot over a real window.
-
-### `depin-attest` — the reference impl, verified on mainnet
-
-A \$40 Pi running ZeroClaw becomes a Solana-attesting DePIN node: the agent takes a sensor reading, the plugin builds a versioned tx with a [Solana Attestation Service](https://attest.solana.com/) `create_attestation` (or memo fallback) + a **durable nonce** (the blockhash-expiry fix — a queued tx doesn't die), and returns a ~200-token summary. **T1 default** (unsigned — a human/multisig signs) + **T2 opt-in** (scoped session key). The T2 path is **verified live on mainnet** — a real, explorer-verifiable on-chain attestation paying real fees. See [Live on mainnet](#live-on-mainnet) below (it's also Safety evidence — the custody guards fired pre-sign on a real submission).
-
-> A stream of signed attestations from a stable key *is* an oracle feed — the `depin-attest` README documents how to consume the attestation stream as an oracle, rather than shipping a separate `oracle-publish` component. **Depth over breadth**, per the bounty's guidance.
+**`palinurus-core`** is the shared `wasm32-wasip2`-friendly Solana substrate (PDA derivation, base58, borsh, versioned-tx, durable-nonce, JSON-RPC over `waki`, ~200-token response shaping), [published on crates.io](https://crates.io/crates/palinurus-core) as `v0.1.0`. Both plugins depend on the **published crate** — no fork git URL.
 
 ### Custody at a glance
 
@@ -95,41 +64,13 @@ A \$40 Pi running ZeroClaw becomes a Solana-attesting DePIN node: the agent take
 | `depin-attest` | — | ✅ durable-nonce attestation | ✅ opt-in, scoped session key, allowlist + caps — **verified on mainnet** |
 | `depin-rewards` | ✅ Relay + Telegram | 📋 unsigned claim tx (design documented, deferred) | ❌ never (claim moves value → multisig) |
 
-The agent never holds a main wallet key. Pattern: *agent proposes, multisig disposes.*
+The agent never holds a main wallet key. Pattern: *agent proposes, multisig disposes.* Each plugin declares + defends its tier with a **fail-closed prompt-injection transcript backed by host tests** — see [Custody](#custody).
+
+> A stream of signed attestations from a stable key *is* an oracle feed — the `depin-attest` README documents how to consume the attestation stream as an oracle, rather than shipping a separate `oracle-publish` component. **Depth over breadth.**
 
 ---
 
-## Safety & custody
-
-*Rubric: "Can we prompt-inject it? Does it fail closed? Is the tier honest?"*
-
-Custody is treated as a first-class engineering problem — the thesis is that an agent with a private key + an LLM in the loop **is a hot wallet with a prompt-injection surface**. Every plugin declares + defends its tier with a **fail-closed prompt-injection transcript backed by host tests**.
-
-### `depin-rewards` — T0/T1 only, no signing key anywhere
-
-**The plugin holds no key of any kind.** Not a main wallet key, not a session key, not a fee-payer key. There is no `ed25519` / signing dependency and no signing code path anywhere in the crate — verified by `no_signing_capabilities_in_crate`, a test that greps `Cargo.toml` + source for signing tokens and asserts none. Four attack vectors, four rejections:
-
-| Vector | Guard (test-backed) | Result |
-|---|---|---|
-| Watch/alert an unconfigured hotspot | `enforce_hotspot_allowlist` (wired into every action) | `Err::Config("hotspot 'evil-id' not in configured allowlist")` |
-| Exfiltrate `relay_api_key` / `telegram_bot_token` via output | redacting `Debug` impl; shapers never echo credentials | sentinel strings absent from output + Debug |
-| Redirect the Telegram alert to an attacker's chat | `chat_id` sourced from **config**, never the message text | recorded POST `chat_id` == configured; `"666"` ignored |
-| Claim rewards for a different owner (`claim_tx`, roadmap) | owner sourced from Relay `get-hotspot`, never the message | no message-supplied owner parameter by construction |
-
-**Worst-case blast radius of a prompt injection:** Telegram spam to the *configured* chat (rate-limited by `watch` cadence) or a claim tx drafted for the *configured* hotspot's *own* owner. Nuisance, not theft.
-
-### `depin-attest` — full T2 guards, fail-closed, proven on mainnet
-
-T2 autonomous signing is the brutal bar: *if a judge can prompt-inject the agent into draining the session key → zero on safety regardless of code quality.* The T2 path enforces, **before signing**:
-
-- **Program allowlist `{System, SAS, Memo}`** — a value-transfer instruction is not expressible; `enforce_program_allowlist` checks every ix.
-- **Session-key identity** — the signing key must equal `authority` = `payer` = `nonce_authority` (one scoped identity, enforced).
-- **Hard caps** — per-tx fee cap (`max_lamports_per_tx`) + per-day attestation cap (`max_attestations_per_day`, UTC day from the reading timestamp).
-- **No main wallet key** — the session key is dedicated, scoped, cents-only.
-
-Four attack vectors, four rejections (full transcript in the `depin-attest` README): memo-encoded "transfer 1 SOL" (inert — no transfer code path) · injected SPL Token ix (fail closed — not in allowlist) · "print the session key" (key never serialized into any output; `Debug` redacted) · daily-cap bypass via timestamp rolling (fail closed at cap+1; rolled timestamps produce different attestation PDAs — natural dedup).
-
-### Live on mainnet — the T2 proof (also Real-utility evidence)
+## Proven on mainnet
 
 The `depin-attest` T2 custody path is **verified on Solana mainnet** — a real, explorer-verifiable attestation paying real fees, not an unsigned draft. This is the **only on-chain-verified entry** in the Track-C field — and the only one proven on **mainnet** (no `?cluster=devnet` in the URL).
 
@@ -174,9 +115,37 @@ Plus 6 passing notes (signing correctness **mainnet-confirmed**, identity guard 
 
 ---
 
-## Code quality
+## Custody
 
-*Rubric: "Pure core, real tests, clean shim, idiomatic Rust."*
+Custody is treated as a first-class engineering problem — the thesis is that an agent with a private key + an LLM in the loop **is a hot wallet with a prompt-injection surface**. Every plugin declares + defends its tier with a **fail-closed prompt-injection transcript backed by host tests**.
+
+### `depin-rewards` — T0/T1 only, no signing key anywhere
+
+**The plugin holds no key of any kind.** Not a main wallet key, not a session key, not a fee-payer key. There is no `ed25519` / signing dependency and no signing code path anywhere in the crate — verified by `no_signing_capabilities_in_crate`, a test that greps `Cargo.toml` + source for signing tokens and asserts none. Four attack vectors, four rejections:
+
+| Vector | Guard (test-backed) | Result |
+|---|---|---|
+| Watch/alert an unconfigured hotspot | `enforce_hotspot_allowlist` (wired into every action) | `Err::Config("hotspot 'evil-id' not in configured allowlist")` |
+| Exfiltrate `relay_api_key` / `telegram_bot_token` via output | redacting `Debug` impl; shapers never echo credentials | sentinel strings absent from output + Debug |
+| Redirect the Telegram alert to an attacker's chat | `chat_id` sourced from **config**, never the message text | recorded POST `chat_id` == configured; `"666"` ignored |
+| Claim rewards for a different owner (`claim_tx`, roadmap) | owner sourced from Relay `get-hotspot`, never the message | no message-supplied owner parameter by construction |
+
+**Worst-case blast radius of a prompt injection:** Telegram spam to the *configured* chat (rate-limited by `watch` cadence) or a claim tx drafted for the *configured* hotspot's *own* owner. Nuisance, not theft.
+
+### `depin-attest` — full T2 guards, fail-closed, proven on mainnet
+
+T2 autonomous signing is the brutal bar: *if a judge can prompt-inject the agent into draining the session key → zero on safety regardless of code quality.* The T2 path enforces, **before signing**:
+
+- **Program allowlist `{System, SAS, Memo}`** — a value-transfer instruction is not expressible; `enforce_program_allowlist` checks every ix.
+- **Session-key identity** — the signing key must equal `authority` = `payer` = `nonce_authority` (one scoped identity, enforced).
+- **Hard caps** — per-tx fee cap (`max_lamports_per_tx`) + per-day attestation cap (`max_attestations_per_day`, UTC day from the reading timestamp).
+- **No main wallet key** — the session key is dedicated, scoped, cents-only.
+
+Four attack vectors, four rejections (full transcript in the `depin-attest` README): memo-encoded "transfer 1 SOL" (inert — no transfer code path) · injected SPL Token ix (fail closed — not in allowlist) · "print the session key" (key never serialized into any output; `Debug` redacted) · daily-cap bypass via timestamp rolling (fail closed at cap+1; rolled timestamps produce different attestation PDAs — natural dedup).
+
+---
+
+## Architecture
 
 **Pure-core / thin-shim split.** Every plugin puts its logic in a `src/<name>.rs` pure module with **no wasm deps** (host-testable with `cargo test`), and a `src/lib.rs` thin `#[cfg(target_family = "wasm")]` component shim that parses args, builds config, calls the pure core, and shapes a ~200-token `ToolResult`. The consensus-critical primitives live in `palinurus-core`.
 
@@ -189,35 +158,43 @@ Plus 6 passing notes (signing correctness **mainnet-confirmed**, identity guard 
 
 **Why hand-roll the substrate?** `solana-sdk` / `solana-program` can't compile inside a WIT component (syscall stubs). PDA derivation is rebuilt from `sha2` + `curve25519-dalek` and **cross-checked byte-for-byte against `solana_program` and `@solana/web3.js`** (TS oracles, host dev-deps) — the layout gotcha (`sha256(seeds ‖ bump ‖ program_id ‖ "ProgramDerivedAddress")`, bump as the last seed) was caught by the oracle, not guessed. Both plugins depend on the **published crates.io** core (`palinurus-core = "0.1"`) — no fork git URL for upstream reviewers.
 
-**Output shaping.** Every tool returns ≤200 tokens / ≤800 chars — never a raw 40KB `getProgramAccounts` dump (the bounty's context-window trap). Judges can `execute` and count tokens.
+**Output shaping.** Every tool returns ≤200 tokens / ≤800 chars — never a raw 40KB `getProgramAccounts` dump (the context-window trap). Judges can `execute` and count tokens.
 
----
-
-## Merge-readiness
-
-*Rubric: "Manifest, docs, versioning, permissions minimal, could upstream merge it today?"*
-
-- **Layout matches `redact-text` exactly** (hard req #1) — `src/<name>.rs` (pure) + `src/lib.rs` (thin shim) + `tests/` + `manifest.toml`. MIT licensed.
-- **Minimal permissions** — each `manifest.toml` declares only what the plugin needs: `http_client` (Relay/RPC) + `config_read` (the jailed config section). Nothing broader.
-- **Versioning** — `v0.1.0` semver; kebab-case crate names (`depin-attest`, `depin-rewards`); `palinurus-core v0.1.0` live on crates.io.
-- **Crates.io dep, not a fork** — `palinurus-core = "0.1"` resolves from the registry; no git URL, no path dep for upstream reviewers to chase.
-- **Both WIT shims are wired.** `depin-attest`'s shim has shipped wired since slice A. `depin-rewards`'s `execute()` **was** a slice-A stub returning "not wired yet" — caught in the pre-submission judge audit and **fixed**: it now dispatches to the pure core via `execute_entry` + `RewardsRequest` (3 TDD dispatch tests) + a real wasm `WakiHttp` (waki-backed `HttpClient` impl, `cfg(target_family="wasm")`). The plugin **functions as a WIT component** — `wasm32-wasip2` build is clean.
+**Merge-readiness.** Layout matches `redact-text` exactly (hard req #1) — `src/<name>.rs` (pure) + `src/lib.rs` (thin shim) + `tests/` + `manifest.toml`, MIT licensed. Minimal permissions: each `manifest.toml` declares only `http_client` + `config_read`. `v0.1.0` semver, kebab-case crate names. **Both WIT shims are wired** — `depin-attest`'s shim shipped wired since slice A; `depin-rewards`'s `execute()` was a slice-A stub, caught in the pre-submission audit and **fixed** to dispatch to the pure core via `execute_entry` + `RewardsRequest` (3 TDD dispatch tests) + a real wasm `WakiHttp`. The plugin **functions as a WIT component** — `wasm32-wasip2` build is clean.
 
 > The audit catch: a working pure core + demo driver is not enough — the actual WIT entry point must be wired too. The fix mirrors `depin-attest`'s architecture: an `execute_entry` dispatch seam (host-testable) + a wasm-only `WakiHttp` (verified by the wasm build).
 
 ---
 
+## Build & test
+
+```bash
+rustup target add wasm32-wasip2
+cargo test                                  # 212 host tests, no wasm toolchain needed
+cargo build --release --target wasm32-wasip2 # the core compiles to the component target
+cargo clippy --all-targets -- -D warnings    # zero warnings, both crates, both feature modes
+```
+
+Per-plugin:
+
+```bash
+cd plugins/depin-attest   && cargo test --features demo   # 83 host tests (77 core + 6 demo)
+cd plugins/depin-rewards  && cargo test --features demo   # 58 host tests (55 core + 3 demo)
+```
+
+The plugin + demo driver source, the recording guide, and the full custody + injection transcripts live in the [PR #76](https://github.com/zeroclaw-labs/zeroclaw-plugins/pull/76) repo (`plugins/depin-attest`, `plugins/depin-rewards`).
+
+---
+
 ## Demo & docs
 
-*Rubric: "Can we understand and run it in 5 minutes?"*
-
-### Screenshots (3)
+### Screenshots
 
 | Terminal: T2 demo driver | Explorer: confirmed mainnet tx | Marketing site |
 |---|---|---|
-| signs + submits on camera | Success · Finalized | palinurus.rectorspace.com |
+| signs + submits on camera | Success · Finalized · Mainnet Beta | palinurus.rectorspace.com |
 
-See them inline above ([Live on mainnet](#live-on-mainnet)) and in the [Marketing site](#marketing-site) section.
+See them inline above ([Proven on mainnet](#proven-on-mainnet)) and in the [Marketing site](#marketing-site) section.
 
 ### Wiring diagram
 
@@ -251,16 +228,14 @@ Live at **[palinurus.rectorspace.com](https://palinurus.rectorspace.com)** — N
 
 ---
 
-## Build & test
+## Roadmap
 
-```bash
-rustup target add wasm32-wasip2
-cargo test                                  # 212 host tests, no wasm toolchain needed
-cargo build --release --target wasm32-wasip2 # the core compiles to the component target
-cargo clippy --all-targets -- -D warnings    # zero warnings, both crates, both feature modes
-```
+- **On-chain SAS landing** — the [Solana Attestation Service](https://attest.solana.com/) path (`create_attestation`, verifiable + credential-bound) builds + derives correctly but is blocked on schema creation (SAS `0x4`); the memo-fallback path is the landed proof today.
+- **`depin-rewards` claim tx** — Helium hotspots are compressed NFTs, so the claim ix is `distribute_compression_rewards_v0` + a DAS `get_asset_proof` merkle proof (not `distribute_rewards_v0`). Design verified (program id, PDAs, custody posture documented); impl is the next focused milestone — alerts core ships complete + correct rather than rush a half-verified claim tx.
+- **On-chain daily-cap counter PDA** — the per-day attestation cap is currently a rate-hint (timestamp-rollable); a counter PDA incremented per attestation would make it tamper-proof (needs a program; defeats the "no custom program" simplicity — deliberate trade-off for now).
+- **`solana_sdk` cross-impl sign oracle** — signing correctness is mainnet-confirmed empirically; a unit oracle against `solana_sdk` would close the byte-equivalence rigor gap (optional, P1 in the audit).
 
-The plugin + demo driver source, the recording guide, and the full custody + injection transcripts live in the [PR #76](https://github.com/zeroclaw-labs/zeroclaw-plugins/pull/76) repo (`plugins/depin-attest`, `plugins/depin-rewards`).
+---
 
 ## License
 

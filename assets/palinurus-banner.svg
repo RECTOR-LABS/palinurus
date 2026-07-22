@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="sol" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9945FF"/>
+      <stop offset="1" stop-color="#14F195"/>
+    </linearGradient>
+    <linearGradient id="solV" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9945FF"/>
+      <stop offset="1" stop-color="#14F195"/>
+    </linearGradient>
+    <radialGradient id="glowP" cx="0.24" cy="0.30" r="0.46">
+      <stop offset="0" stop-color="#9945FF" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#9945FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowG" cx="0.80" cy="0.30" r="0.40">
+      <stop offset="0" stop-color="#14F195" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#14F195" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#1b2230"/>
+    </pattern>
+  </defs>
+
+  <!-- background -->
+  <rect width="1200" height="360" fill="#0d1117"/>
+  <rect width="1200" height="360" fill="url(#glowP)"/>
+  <rect width="1200" height="360" fill="url(#glowG)"/>
+  <rect width="1200" height="360" fill="url(#dots)" opacity="0.5"/>
+  <rect x="0.5" y="0.5" width="1199" height="359" fill="none" stroke="#1f2630"/>
+
+  <!-- directional mark: edge node radiating signal (left) → dotted path → Solana chain (right) -->
+  <g transform="translate(600,84)">
+    <!-- concentric broadcast rings emanating from the node (the source) -->
+    <g stroke="url(#sol)" stroke-width="2.6" fill="none" stroke-linecap="round">
+      <path d="M -120 -26 A 26 26 0 0 1 -120 26" opacity="0.92"/>
+      <path d="M -120 -40 A 40 40 0 0 1 -120 40" opacity="0.5"/>
+      <path d="M -120 -54 A 54 54 0 0 1 -120 54" opacity="0.28"/>
+    </g>
+
+    <!-- edge node (the physical-edge device) -->
+    <circle cx="-120" cy="0" r="15" fill="#0d1117" stroke="url(#sol)" stroke-width="3"/>
+    <circle cx="-120" cy="0" r="5.5" fill="#14F195"/>
+
+    <!-- the signal traveling to the chain: packets growing as they approach, purple→green = attesting back -->
+    <g fill-opacity="1">
+      <circle cx="-95"  cy="0" r="3"   fill="#9945FF" fill-opacity="0.62"/>
+      <circle cx="-57"  cy="0" r="3.6" fill="#8063E6" fill-opacity="0.74"/>
+      <circle cx="-19"  cy="0" r="4.2" fill="#6681CC" fill-opacity="0.84"/>
+      <circle cx="19"   cy="0" r="4.8" fill="#4DA0B3" fill-opacity="0.9"/>
+      <circle cx="57"   cy="0" r="5.4" fill="#33BE99" fill-opacity="0.96"/>
+      <circle cx="95"  cy="0" r="6"   fill="#14F195"/>
+    </g>
+
+    <!-- solana chain diamond (the destination) -->
+    <g transform="translate(120,0)">
+      <rect x="-14" y="-14" width="28" height="28" transform="rotate(45)" fill="#0d1117" stroke="url(#sol)" stroke-width="3"/>
+      <rect x="-7" y="-7" width="14" height="14" transform="rotate(45)" fill="url(#solV)"/>
+    </g>
+  </g>
+
+  <!-- wordmark -->
+  <text x="600" y="198" text-anchor="middle" font-size="76" font-weight="700" fill="#e6edf3" letter-spacing="2.5">Palinurus</text>
+
+  <!-- gradient underline -->
+  <rect x="466" y="216" width="268" height="3" rx="1.5" fill="url(#sol)"/>
+
+  <!-- tagline -->
+  <text x="600" y="252" text-anchor="middle" font-size="21" fill="#c9d1d9">The Solana DePIN node that talks — a navigator at the physical edge, attesting back to the chain.</text>
+
+  <!-- status pills -->
+  <g font-size="14" font-weight="600">
+    <rect x="313" y="294" width="160" height="29" rx="14.5" fill="#0f2417" stroke="#1f5d3a"/>
+    <circle cx="328" cy="308.5" r="4" fill="#14F195"/>
+    <text x="340" y="313.5" fill="#3fb950">mainnet-verified</text>
+
+    <rect x="483" y="294" width="120" height="29" rx="14.5" fill="#161b22" stroke="#30363d"/>
+    <text x="543" y="313.5" text-anchor="middle" fill="#c9d1d9">212 host tests</text>
+
+    <rect x="613" y="294" width="160" height="29" rx="14.5" fill="#161b22" stroke="#30363d"/>
+    <text x="693" y="313.5" text-anchor="middle" fill="#e6edf3">crates.io · v0.1.0</text>
+
+    <rect x="783" y="294" width="104" height="29" rx="14.5" fill="#161b22" stroke="#30363d"/>
+    <text x="835" y="313.5" text-anchor="middle" fill="#c9d1d9">MIT license</text>
+  </g>
+</svg>

@@ -1,236 +1,203 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 780" font-family="-apple-system, 'Segoe UI', 'SF Pro Display', 'Inter', system-ui, sans-serif" role="img" aria-label="Palinurus wiring diagram: physical edge to ZeroClaw agent to Solana">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 820" font-family="-apple-system, 'Segoe UI', 'SF Pro Display', 'Inter', system-ui, sans-serif" role="img" aria-label="Palinurus wiring diagram: physical edge to ZeroClaw agent to Solana">
   <title>Palinurus — wiring diagram (physical edge → ZeroClaw → Solana)</title>
   <desc>A Raspberry Pi running ZeroClaw hosts two Palinurus WIT plugins: depin-attest (turns a sensor reading into a Solana Attestation Service attestation) and depin-rewards (watches a public Helium hotspot via the Relay API and fires Telegram alerts). Every transaction is unsigned; a human or Squads multisig signs on the cold path.</desc>
 
   <defs>
-    <!-- dark background -->
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#0d1117"/>
       <stop offset="1" stop-color="#010409"/>
     </linearGradient>
-
-    <!-- arrow markers, one per accent color -->
-    <marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#2dd4bf"/>
-    </marker>
-    <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#fbbf24"/>
-    </marker>
-    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#229ED9"/>
-    </marker>
-    <marker id="arrow-coral" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#ff7a59"/>
-    </marker>
-    <marker id="arrow-ice" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#7dd3fc"/>
-    </marker>
-    <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#6e7681"/>
-    </marker>
-
-    <!-- Solana brand gradient swatch -->
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2dd4bf"/></marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#fbbf24"/></marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#229ED9"/></marker>
+    <marker id="arrow-coral" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ff7a59"/></marker>
+    <marker id="arrow-ice" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7dd3fc"/></marker>
+    <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6e7681"/></marker>
     <linearGradient id="solana" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="#9945FF"/>
       <stop offset="1" stop-color="#14F195"/>
     </linearGradient>
   </defs>
 
-  <!-- background -->
-  <rect x="0" y="0" width="1280" height="780" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1440" height="820" fill="url(#bg)"/>
 
-  <!-- ───────── title block ───────── -->
+  <!-- ───────── title ───────── -->
   <g id="title">
-    <text x="640" y="44" text-anchor="middle" font-size="26" font-weight="700" fill="#e6edf3">Palinurus — the Solana DePIN node that talks</text>
-    <text x="640" y="72" text-anchor="middle" font-size="14" fill="#8b949e">physical edge  →  ZeroClaw agent  →  Solana    ·    wiring &amp; custody</text>
+    <text x="720" y="46" text-anchor="middle" font-size="27" font-weight="700" fill="#e6edf3">Palinurus — the Solana DePIN node that talks</text>
+    <text x="720" y="75" text-anchor="middle" font-size="14" fill="#8b949e">physical edge  →  ZeroClaw agent  →  Solana    ·    wiring &amp; custody</text>
   </g>
 
   <!-- ───────── column headers ───────── -->
-  <g id="col-headers" font-size="11" fill="#6e7681" text-anchor="middle" letter-spacing="1.5">
-    <text x="140" y="120">PHYSICAL EDGE</text>
-    <text x="370" y="120">AGENT RUNTIME</text>
-    <text x="605" y="120">PLUGINS (WIT, wasm32-wasip2)</text>
-    <text x="850" y="120">EXTERNAL APIS</text>
-    <text x="1115" y="120">SOLANA</text>
+  <g id="col-headers" font-size="11.5" fill="#6e7681" text-anchor="middle" letter-spacing="1.5">
+    <text x="180" y="118">PHYSICAL EDGE</text>
+    <text x="435" y="118">AGENT RUNTIME</text>
+    <text x="700" y="118">PLUGINS (WIT, wasm32-wasip2)</text>
+    <text x="965" y="118">EXTERNAL APIS</text>
+    <text x="1240" y="118">SOLANA</text>
   </g>
 
   <!-- ───────── Node 1: Physical edge ───────── -->
   <g id="node-edge">
-    <rect x="50" y="150" width="180" height="240" rx="14" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
-    <!-- Raspberry Pi glyph -->
-    <rect x="80" y="178" width="120" height="78" rx="8" fill="#0d1117" stroke="#2fa755" stroke-width="1.5"/>
-    <text x="140" y="206" text-anchor="middle" font-size="13" font-weight="700" fill="#2fa755">Raspberry Pi 4</text>
-    <text x="140" y="224" text-anchor="middle" font-size="10" fill="#8b949e">GPIO · I²C · SPI</text>
-    <text x="140" y="240" text-anchor="middle" font-size="10" fill="#8b949e">ZeroClaw host OS</text>
-    <!-- sensor glyph -->
-    <circle cx="140" cy="296" r="22" fill="#0d1117" stroke="#2fa755" stroke-width="1.5"/>
-    <circle cx="140" cy="296" r="6" fill="#2fa755"/>
-    <text x="140" y="340" text-anchor="middle" font-size="12" font-weight="600" fill="#e6edf3">Sensor</text>
-    <text x="140" y="358" text-anchor="middle" font-size="10" fill="#8b949e">temp · CO₂ · GPS · …</text>
-    <text x="140" y="374" text-anchor="middle" font-size="10" fill="#8b949e">periodic reading</text>
+    <rect x="80" y="138" width="200" height="272" rx="14" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+    <rect x="110" y="168" width="140" height="84" rx="8" fill="#0d1117" stroke="#2fa755" stroke-width="1.5"/>
+    <text x="180" y="198" text-anchor="middle" font-size="14" font-weight="700" fill="#2fa755">Raspberry Pi 4</text>
+    <text x="180" y="218" text-anchor="middle" font-size="10.5" fill="#8b949e">GPIO · I²C · SPI</text>
+    <text x="180" y="236" text-anchor="middle" font-size="10.5" fill="#8b949e">ZeroClaw host OS</text>
+    <circle cx="180" cy="308" r="24" fill="#0d1117" stroke="#2fa755" stroke-width="1.5"/>
+    <circle cx="180" cy="308" r="7" fill="#2fa755"/>
+    <text x="180" y="356" text-anchor="middle" font-size="13" font-weight="600" fill="#e6edf3">Sensor</text>
+    <text x="180" y="376" text-anchor="middle" font-size="10.5" fill="#8b949e">temp · CO₂ · GPS · …</text>
+    <text x="180" y="394" text-anchor="middle" font-size="10.5" fill="#8b949e">periodic reading</text>
   </g>
 
   <!-- ───────── Node 2: ZeroClaw runtime ───────── -->
   <g id="node-zc">
-    <rect x="280" y="150" width="180" height="240" rx="14" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
-    <text x="370" y="182" text-anchor="middle" font-size="14" font-weight="700" fill="#e6edf3">ZeroClaw</text>
-    <text x="370" y="200" text-anchor="middle" font-size="10" fill="#8b949e">self-hosted Rust agent</text>
-    <!-- SOP engine -->
-    <rect x="300" y="216" width="140" height="46" rx="8" fill="#0d1117" stroke="#58a6ff" stroke-width="1.2"/>
-    <text x="370" y="234" text-anchor="middle" font-size="11" font-weight="600" fill="#58a6ff">SOP engine</text>
-    <text x="370" y="250" text-anchor="middle" font-size="9" fill="#8b949e">MQTT / peripheral trigger</text>
-    <!-- LLM loop -->
-    <rect x="300" y="270" width="140" height="46" rx="8" fill="#0d1117" stroke="#58a6ff" stroke-width="1.2"/>
-    <text x="370" y="288" text-anchor="middle" font-size="11" font-weight="600" fill="#58a6ff">LLM tool-calling</text>
-    <text x="370" y="304" text-anchor="middle" font-size="9" fill="#8b949e">decides · invokes plugin</text>
-    <!-- WIT host -->
-    <rect x="300" y="324" width="140" height="46" rx="8" fill="#0d1117" stroke="#58a6ff" stroke-width="1.2"/>
-    <text x="370" y="342" text-anchor="middle" font-size="11" font-weight="600" fill="#58a6ff">WIT component host</text>
-    <text x="370" y="358" text-anchor="middle" font-size="9" fill="#8b949e">jailed, capability-scoped</text>
+    <rect x="335" y="138" width="200" height="272" rx="14" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+    <text x="435" y="170" text-anchor="middle" font-size="15" font-weight="700" fill="#e6edf3">ZeroClaw</text>
+    <text x="435" y="190" text-anchor="middle" font-size="10.5" fill="#8b949e">self-hosted Rust agent</text>
+    <rect x="355" y="206" width="160" height="50" rx="8" fill="#0d1117" stroke="#58a6ff" stroke-width="1.2"/>
+    <text x="435" y="226" text-anchor="middle" font-size="11.5" font-weight="600" fill="#58a6ff">SOP engine</text>
+    <text x="435" y="244" text-anchor="middle" font-size="9.5" fill="#8b949e">MQTT / peripheral trigger</text>
+    <rect x="355" y="264" width="160" height="50" rx="8" fill="#0d1117" stroke="#58a6ff" stroke-width="1.2"/>
+    <text x="435" y="284" text-anchor="middle" font-size="11.5" font-weight="600" fill="#58a6ff">LLM tool-calling</text>
+    <text x="435" y="302" text-anchor="middle" font-size="9.5" fill="#8b949e">decides · invokes plugin</text>
+    <rect x="355" y="322" width="160" height="50" rx="8" fill="#0d1117" stroke="#58a6ff" stroke-width="1.2"/>
+    <text x="435" y="342" text-anchor="middle" font-size="11.5" font-weight="600" fill="#58a6ff">WIT component host</text>
+    <text x="435" y="360" text-anchor="middle" font-size="9.5" fill="#8b949e">jailed, capability-scoped</text>
   </g>
 
   <!-- ───────── Node 3: Plugins container ───────── -->
   <g id="node-plugins">
-    <rect x="500" y="140" width="210" height="260" rx="14" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
-    <text x="605" y="160" text-anchor="middle" font-size="10" fill="#6e7681" letter-spacing="1">PALINURUS</text>
+    <rect x="590" y="128" width="220" height="292" rx="14" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+    <text x="700" y="150" text-anchor="middle" font-size="10.5" fill="#6e7681" letter-spacing="1">PALINURUS</text>
 
     <!-- depin-attest -->
-    <rect x="514" y="172" width="182" height="104" rx="10" fill="#0d1117" stroke="#2dd4bf" stroke-width="1.6"/>
-    <text x="605" y="194" text-anchor="middle" font-size="13" font-weight="700" fill="#2dd4bf">depin-attest</text>
-    <text x="605" y="212" text-anchor="middle" font-size="9.5" fill="#e6edf3">reading → SAS</text>
-    <text x="605" y="226" text-anchor="middle" font-size="9.5" fill="#e6edf3">create_attestation ix</text>
-    <text x="605" y="240" text-anchor="middle" font-size="9.5" fill="#e6edf3">+ durable nonce</text>
-    <!-- custody badge -->
-    <rect x="514" y="250" width="90" height="18" rx="9" fill="#2dd4bf" fill-opacity="0.14" stroke="#2dd4bf" stroke-width="0.8"/>
-    <text x="559" y="263" text-anchor="middle" font-size="9" font-weight="700" fill="#2dd4bf">T1 default · T2 opt</text>
+    <rect x="604" y="162" width="192" height="116" rx="10" fill="#0d1117" stroke="#2dd4bf" stroke-width="1.6"/>
+    <text x="700" y="186" text-anchor="middle" font-size="14" font-weight="700" fill="#2dd4bf">depin-attest</text>
+    <text x="700" y="206" text-anchor="middle" font-size="10" fill="#e6edf3">reading → SAS</text>
+    <text x="700" y="222" text-anchor="middle" font-size="10" fill="#e6edf3">create_attestation ix</text>
+    <text x="700" y="238" text-anchor="middle" font-size="10" fill="#e6edf3">+ durable nonce</text>
+    <rect x="638" y="250" width="124" height="20" rx="10" fill="#2dd4bf" fill-opacity="0.14" stroke="#2dd4bf" stroke-width="0.8"/>
+    <text x="700" y="264" text-anchor="middle" font-size="10" font-weight="700" fill="#2dd4bf">T1 default · T2 opt</text>
 
     <!-- depin-rewards -->
-    <rect x="514" y="284" width="182" height="104" rx="10" fill="#0d1117" stroke="#fbbf24" stroke-width="1.6"/>
-    <text x="605" y="306" text-anchor="middle" font-size="13" font-weight="700" fill="#fbbf24">depin-rewards</text>
-    <text x="605" y="324" text-anchor="middle" font-size="9.5" fill="#e6edf3">watch hotspot</text>
-    <text x="605" y="338" text-anchor="middle" font-size="9.5" fill="#e6edf3">offline-alert + summary</text>
-    <text x="605" y="352" text-anchor="middle" font-size="9.5" fill="#e6edf3">+ unsigned claim (roadmap)</text>
-    <rect x="540" y="362" width="130" height="18" rx="9" fill="#fbbf24" fill-opacity="0.14" stroke="#fbbf24" stroke-width="0.8"/>
-    <text x="605" y="375" text-anchor="middle" font-size="9" font-weight="700" fill="#fbbf24">T0 reads · T1 unsigned · NO T2</text>
+    <rect x="604" y="288" width="192" height="120" rx="10" fill="#0d1117" stroke="#fbbf24" stroke-width="1.6"/>
+    <text x="700" y="312" text-anchor="middle" font-size="14" font-weight="700" fill="#fbbf24">depin-rewards</text>
+    <text x="700" y="332" text-anchor="middle" font-size="10" fill="#e6edf3">watch hotspot</text>
+    <text x="700" y="348" text-anchor="middle" font-size="10" fill="#e6edf3">offline-alert + summary</text>
+    <text x="700" y="364" text-anchor="middle" font-size="10" fill="#e6edf3">+ unsigned claim (roadmap)</text>
+    <rect x="610" y="376" width="180" height="22" rx="11" fill="#fbbf24" fill-opacity="0.14" stroke="#fbbf24" stroke-width="0.8"/>
+    <text x="700" y="391" text-anchor="middle" font-size="10" font-weight="700" fill="#fbbf24">T0 reads · T1 unsigned · NO T2</text>
   </g>
 
-  <!-- ───────── Node 4: External APIs (rewards lane only) ───────── -->
+  <!-- ───────── Node 4: External APIs ───────── -->
   <g id="node-external">
-    <rect x="740" y="284" width="180" height="104" rx="14" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
-    <text x="830" y="304" text-anchor="middle" font-size="10" fill="#6e7681" letter-spacing="1">PUBLIC DATA</text>
-    <!-- Relay -->
-    <rect x="754" y="312" width="152" height="32" rx="8" fill="#0d1117" stroke="#ff7a59" stroke-width="1.4"/>
-    <text x="830" y="332" text-anchor="middle" font-size="11" font-weight="600" fill="#ff7a59">Relay API (read)</text>
-    <!-- Telegram -->
-    <rect x="754" y="348" width="152" height="32" rx="8" fill="#0d1117" stroke="#229ED9" stroke-width="1.4"/>
-    <text x="830" y="368" text-anchor="middle" font-size="11" font-weight="600" fill="#229ED9">Telegram Bot API</text>
+    <rect x="865" y="288" width="200" height="120" rx="14" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+    <text x="965" y="312" text-anchor="middle" font-size="10.5" fill="#6e7681" letter-spacing="1">PUBLIC DATA</text>
+    <rect x="881" y="322" width="168" height="34" rx="8" fill="#0d1117" stroke="#ff7a59" stroke-width="1.4"/>
+    <text x="965" y="343" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ff7a59">Relay API (read)</text>
+    <rect x="881" y="362" width="168" height="34" rx="8" fill="#0d1117" stroke="#229ED9" stroke-width="1.4"/>
+    <text x="965" y="383" text-anchor="middle" font-size="11.5" font-weight="600" fill="#229ED9">Telegram Bot API</text>
   </g>
 
   <!-- ───────── Node 5: Solana ───────── -->
   <g id="node-solana">
-    <rect x="990" y="150" width="240" height="240" rx="14" fill="#161b22" stroke="url(#solana)" stroke-width="1.8"/>
-    <text x="1110" y="182" text-anchor="middle" font-size="15" font-weight="700" fill="#e6edf3">Solana</text>
-    <text x="1110" y="200" text-anchor="middle" font-size="10" fill="#8b949e">mainnet-verified · devnet</text>
+    <rect x="1120" y="138" width="240" height="272" rx="14" fill="#161b22" stroke="url(#solana)" stroke-width="1.8"/>
+    <text x="1240" y="172" text-anchor="middle" font-size="16" font-weight="700" fill="#e6edf3">Solana</text>
+    <text x="1240" y="192" text-anchor="middle" font-size="10.5" fill="#8b949e">mainnet-verified · devnet</text>
 
-    <!-- SAS (attest lane) -->
-    <rect x="1004" y="216" width="212" height="60" rx="10" fill="#0d1117" stroke="#14F195" stroke-width="1.4"/>
-    <text x="1110" y="236" text-anchor="middle" font-size="12" font-weight="700" fill="#14F195">Solana Attestation Svc</text>
-    <text x="1110" y="252" text-anchor="middle" font-size="9.5" fill="#8b949e">create_attestation → on-chain PDA</text>
-    <text x="1110" y="266" text-anchor="middle" font-size="9.5" fill="#8b949e">explorer-verifiable · reusable</text>
+    <rect x="1134" y="208" width="212" height="66" rx="10" fill="#0d1117" stroke="#14F195" stroke-width="1.4"/>
+    <text x="1240" y="230" text-anchor="middle" font-size="12.5" font-weight="700" fill="#14F195">Solana Attestation Svc</text>
+    <text x="1240" y="248" text-anchor="middle" font-size="9.5" fill="#8b949e">create_attestation → on-chain PDA</text>
+    <text x="1240" y="263" text-anchor="middle" font-size="9.5" fill="#8b949e">explorer-verifiable · reusable</text>
 
-    <!-- lazy-distributor (rewards lane) -->
-    <rect x="1004" y="284" width="212" height="60" rx="10" fill="#0d1117" stroke="#9945FF" stroke-width="1.4" stroke-dasharray="5 3"/>
-    <text x="1110" y="304" text-anchor="middle" font-size="12" font-weight="700" fill="#9945FF">lazy-distributor · roadmap</text>
-    <text x="1110" y="320" text-anchor="middle" font-size="9.5" fill="#8b949e">distribute_compression_rewards_v0</text>
-    <text x="1110" y="334" text-anchor="middle" font-size="9.5" fill="#8b949e">cNFT · DAS get_asset_proof · merkle</text>
+    <rect x="1134" y="286" width="212" height="66" rx="10" fill="#0d1117" stroke="#9945FF" stroke-width="1.4" stroke-dasharray="5 3"/>
+    <text x="1240" y="308" text-anchor="middle" font-size="12.5" font-weight="700" fill="#9945FF">lazy-distributor · roadmap</text>
+    <text x="1240" y="326" text-anchor="middle" font-size="9.5" fill="#8b949e">distribute_compression_rewards_v0</text>
+    <text x="1240" y="341" text-anchor="middle" font-size="9.5" fill="#8b949e">cNFT · DAS get_asset_proof · merkle</text>
 
-    <text x="1110" y="368" text-anchor="middle" font-size="9.5" fill="#6e7681">attestations = an oracle feed</text>
+    <text x="1240" y="380" text-anchor="middle" font-size="10" fill="#6e7681">attestations = an oracle feed</text>
   </g>
 
   <!-- ═══════════ flow arrows ═══════════ -->
+  <!-- edge → ZeroClaw -->
+  <line x1="280" y1="270" x2="331" y2="270" stroke="#2fa755" stroke-width="2.2" marker-end="url(#arrow-muted)"/>
+  <text x="306" y="261" text-anchor="middle" font-size="9.5" fill="#8b949e">reading</text>
 
-  <!-- edge → ZeroClaw (sensor reading via GPIO) -->
-  <line x1="230" y1="270" x2="276" y2="270" stroke="#2fa755" stroke-width="2.2" marker-end="url(#arrow-muted)"/>
-  <text x="253" y="262" text-anchor="middle" font-size="9" fill="#8b949e">reading</text>
+  <!-- ZeroClaw → plugins -->
+  <line x1="535" y1="270" x2="586" y2="270" stroke="#58a6ff" stroke-width="2.2" marker-end="url(#arrow-muted)"/>
+  <text x="560" y="261" text-anchor="middle" font-size="9.5" fill="#8b949e">execute()</text>
 
-  <!-- ZeroClaw → plugins (WIT execute()) -->
-  <line x1="460" y1="270" x2="496" y2="270" stroke="#58a6ff" stroke-width="2.2" marker-end="url(#arrow-muted)"/>
-  <text x="478" y="262" text-anchor="middle" font-size="9" fill="#8b949e">execute()</text>
+  <!-- depin-attest → Solana SAS (unsigned tx, arcs over the external box) -->
+  <path d="M 796 220 C 900 220, 1020 222, 1118 234" fill="none" stroke="#2dd4bf" stroke-width="2.4" marker-end="url(#arrow-teal)"/>
+  <text x="957" y="210" text-anchor="middle" font-size="10.5" fill="#2dd4bf" font-weight="600">unsigned versioned tx</text>
 
-  <!-- depin-attest → Solana SAS (unsigned tx, arcs over external box) -->
-  <path d="M 696 224 C 760 224, 800 224, 986 236" fill="none" stroke="#2dd4bf" stroke-width="2.4" marker-end="url(#arrow-teal)"/>
-  <text x="838" y="216" text-anchor="middle" font-size="10" fill="#2dd4bf" font-weight="600">unsigned versioned tx</text>
+  <!-- depin-rewards → Relay (read, bidirectional) -->
+  <line x1="796" y1="332" x2="877" y2="338" stroke="#ff7a59" stroke-width="2.2" marker-end="url(#arrow-coral)"/>
+  <line x1="877" y1="348" x2="796" y2="342" stroke="#ff7a59" stroke-width="2.2" marker-end="url(#arrow-coral)" stroke-dasharray="4 3"/>
+  <text x="836" y="324" text-anchor="middle" font-size="9.5" fill="#ff7a59">GET</text>
 
-  <!-- depin-rewards → Relay (read) bidirectional -->
-  <line x1="696" y1="320" x2="752" y2="328" stroke="#ff7a59" stroke-width="2.2" marker-end="url(#arrow-coral)"/>
-  <line x1="752" y1="338" x2="696" y2="346" stroke="#ff7a59" stroke-width="2.2" marker-end="url(#arrow-coral)" stroke-dasharray="4 3"/>
-  <text x="724" y="316" text-anchor="middle" font-size="9" fill="#ff7a59">GET</text>
+  <!-- depin-rewards → Telegram (POST alert) -->
+  <line x1="796" y1="376" x2="877" y2="380" stroke="#229ED9" stroke-width="2.2" marker-end="url(#arrow-blue)"/>
+  <text x="836" y="396" text-anchor="middle" font-size="9.5" fill="#229ED9">alert</text>
 
-  <!-- depin-rewards → Telegram (POST) -->
-  <line x1="696" y1="360" x2="752" y2="364" stroke="#229ED9" stroke-width="2.2" marker-end="url(#arrow-blue)"/>
-  <text x="724" y="392" text-anchor="middle" font-size="9" fill="#229ED9">alert</text>
-
-  <!-- rewards → lazy-distributor (roadmap unsigned claim) -->
-  <path d="M 920 360 C 950 360, 970 320, 986 316" fill="none" stroke="#fbbf24" stroke-width="2.4" stroke-dasharray="6 4" marker-end="url(#arrow-amber)"/>
-  <text x="954" y="350" text-anchor="middle" font-size="10" fill="#fbbf24" font-weight="600">claim (roadmap)</text>
+  <!-- Solana → cold path (signing hand-off) -->
+  <line x1="1240" y1="412" x2="1240" y2="438" stroke="#7dd3fc" stroke-width="1.6" stroke-dasharray="3 3" marker-end="url(#arrow-ice)"/>
+  <text x="1290" y="429" font-size="9.5" fill="#7dd3fc">approve &amp; sign</text>
 
   <!-- ───────── Cold path band ───────── -->
   <g id="cold-path">
-    <rect x="50" y="420" width="1180" height="78" rx="14" fill="#0d1117" stroke="#7dd3fc" stroke-width="1.4" stroke-dasharray="2 4"/>
-    <text x="640" y="448" text-anchor="middle" font-size="14" font-weight="700" fill="#7dd3fc">❄  Cold path — every signed transaction is signed by a human or a Squads multisig</text>
-    <text x="640" y="470" text-anchor="middle" font-size="11" fill="#8b949e">The agent proposes the unsigned tx (durable nonce ⇒ no blockhash expiry while it waits). The agent <tspan font-weight="700" fill="#e6edf3">never holds a main wallet key</tspan> — T2 (attest opt-in) is a scoped session key holding cents, locked to a {System, SAS, Memo} program allowlist.</text>
-    <text x="640" y="488" text-anchor="middle" font-size="10" fill="#6e7681">claim moves value ⇒ rewards stays T0/T1 (multisig). attestation-only T2 ⇒ blast radius = fake attestations, not theft.</text>
+    <rect x="80" y="442" width="1280" height="92" rx="14" fill="#0d1117" stroke="#7dd3fc" stroke-width="1.4" stroke-dasharray="2 4"/>
+    <text x="720" y="472" text-anchor="middle" font-size="14.5" font-weight="700" fill="#7dd3fc">❄  Cold path — every signed transaction is signed by a human or a Squads multisig</text>
+    <text x="720" y="496" text-anchor="middle" font-size="11.5" fill="#8b949e">The agent proposes the unsigned tx (durable nonce ⇒ no blockhash expiry while it waits). The agent <tspan font-weight="700" fill="#e6edf3">never holds a main wallet key</tspan> —</text>
+    <text x="720" y="514" text-anchor="middle" font-size="11.5" fill="#8b949e">T2 (attest opt-in) is a scoped session key holding cents, locked to a {System, SAS, Memo} program allowlist.</text>
+    <text x="720" y="530" text-anchor="middle" font-size="10.5" fill="#6e7681">claim moves value ⇒ rewards stays T0/T1 (multisig). attestation-only T2 ⇒ blast radius = fake attestations, not theft.</text>
   </g>
-
-  <!-- arrows from Solana down to cold path (signing hand-off) -->
-  <line x1="1110" y1="392" x2="1110" y2="416" stroke="#7dd3fc" stroke-width="1.6" stroke-dasharray="3 3" marker-end="url(#arrow-ice)"/>
-  <text x="1160" y="408" font-size="9" fill="#7dd3fc">approve &amp; sign</text>
 
   <!-- ───────── Legend ───────── -->
   <g id="legend">
-    <text x="50" y="538" font-size="11" font-weight="700" fill="#6e7681" letter-spacing="1.5">LEGEND</text>
-
-    <!-- line styles -->
-    <g transform="translate(50,556)">
-      <line x1="0" y1="8" x2="36" y2="8" stroke="#2dd4bf" stroke-width="2.4" marker-end="url(#arrow-teal)"/>
-      <text x="46" y="12" font-size="11" fill="#e6edf3">unsigned tx → Solana</text>
+    <text x="80" y="572" font-size="11.5" font-weight="700" fill="#6e7681" letter-spacing="1.5">LEGEND</text>
+    <g transform="translate(80,584)">
+      <line x1="0" y1="10" x2="36" y2="10" stroke="#2dd4bf" stroke-width="2.4" marker-end="url(#arrow-teal)"/>
+      <text x="46" y="14" font-size="11.5" fill="#e6edf3">unsigned tx → Solana</text>
     </g>
-    <g transform="translate(250,556)">
-      <line x1="0" y1="8" x2="36" y2="8" stroke="#229ED9" stroke-width="2.4" marker-end="url(#arrow-blue)"/>
-      <text x="46" y="12" font-size="11" fill="#e6edf3">alert send (Telegram)</text>
+    <g transform="translate(290,584)">
+      <line x1="0" y1="10" x2="36" y2="10" stroke="#229ED9" stroke-width="2.4" marker-end="url(#arrow-blue)"/>
+      <text x="46" y="14" font-size="11.5" fill="#e6edf3">alert send (Telegram)</text>
     </g>
-    <g transform="translate(460,556)">
-      <line x1="0" y1="8" x2="36" y2="8" stroke="#ff7a59" stroke-width="2.4" marker-end="url(#arrow-coral)"/>
-      <text x="46" y="12" font-size="11" fill="#e6edf3">public read (Relay)</text>
+    <g transform="translate(510,584)">
+      <line x1="0" y1="10" x2="36" y2="10" stroke="#ff7a59" stroke-width="2.4" marker-end="url(#arrow-coral)"/>
+      <text x="46" y="14" font-size="11.5" fill="#e6edf3">public read (Relay)</text>
     </g>
-    <g transform="translate(640,556)">
-      <line x1="0" y1="8" x2="36" y2="8" stroke="#fbbf24" stroke-width="2.4" stroke-dasharray="6 4" marker-end="url(#arrow-amber)"/>
-      <text x="46" y="12" font-size="11" fill="#e6edf3">roadmap (claim tx)</text>
+    <g transform="translate(700,584)">
+      <line x1="0" y1="10" x2="36" y2="10" stroke="#fbbf24" stroke-width="2.4" stroke-dasharray="6 4" marker-end="url(#arrow-amber)"/>
+      <text x="46" y="14" font-size="11.5" fill="#e6edf3">roadmap (claim tx)</text>
     </g>
-    <g transform="translate(820,556)">
-      <line x1="0" y1="8" x2="36" y2="8" stroke="#7dd3fc" stroke-width="2.4" stroke-dasharray="3 3" marker-end="url(#arrow-ice)"/>
-      <text x="46" y="12" font-size="11" fill="#e6edf3">cold-path sign</text>
+    <g transform="translate(890,584)">
+      <line x1="0" y1="10" x2="36" y2="10" stroke="#7dd3fc" stroke-width="2.4" stroke-dasharray="3 3" marker-end="url(#arrow-ice)"/>
+      <text x="46" y="14" font-size="11.5" fill="#e6edf3">cold-path sign</text>
     </g>
 
     <!-- custody tiers -->
-    <text x="50" y="600" font-size="11" font-weight="700" fill="#6e7681" letter-spacing="1.5">CUSTODY TIERS</text>
-    <g transform="translate(50,612)" font-size="10.5">
-      <text x="0" y="14" fill="#2dd4bf" font-weight="700">T0</text>
-      <text x="26" y="14" fill="#8b949e">read public data — no key, no risk</text>
-      <text x="0" y="34" fill="#58a6ff" font-weight="700">T1</text>
-      <text x="26" y="34" fill="#8b949e">agent builds unsigned tx; human/multisig signs</text>
-      <text x="0" y="54" fill="#fbbf24" font-weight="700">T2</text>
-      <text x="26" y="54" fill="#8b949e">scoped session key signs — allowlist + caps + identity (attest opt-in only)</text>
+    <text x="80" y="640" font-size="11.5" font-weight="700" fill="#6e7681" letter-spacing="1.5">CUSTODY TIERS</text>
+    <g transform="translate(80,654)" font-size="11">
+      <text x="0" y="16" fill="#2dd4bf" font-weight="700">T0</text>
+      <text x="28" y="16" fill="#8b949e">read public data — no key, no risk</text>
+      <text x="0" y="38" fill="#58a6ff" font-weight="700">T1</text>
+      <text x="28" y="38" fill="#8b949e">agent builds unsigned tx; human/multisig signs</text>
+      <text x="0" y="60" fill="#fbbf24" font-weight="700">T2</text>
+      <text x="28" y="60" fill="#8b949e">scoped session key signs — allowlist + caps + identity (attest opt-in only)</text>
     </g>
 
-    <!-- stack badges -->
-    <text x="640" y="600" font-size="11" font-weight="700" fill="#6e7681" letter-spacing="1.5">STACK</text>
-    <g transform="translate(640,612)" font-size="10.5">
-      <text x="0" y="14" fill="#e6edf3">ZeroClaw + WIT component model</text>
-      <text x="0" y="34" fill="#e6edf3">palinurus-core (crates.io v0.1.0) — PDA · borsh · versioned-tx · durable nonce</text>
-      <text x="0" y="54" fill="#e6edf3">Solana Attestation Service · Helium cNFTs · Relay aggregator</text>
+    <!-- stack -->
+    <text x="760" y="640" font-size="11.5" font-weight="700" fill="#6e7681" letter-spacing="1.5">STACK</text>
+    <g transform="translate(760,654)" font-size="11">
+      <text x="0" y="16" fill="#e6edf3">ZeroClaw + WIT component model</text>
+      <text x="0" y="38" fill="#e6edf3">palinurus-core (crates.io v0.1.0) — PDA · borsh · versioned-tx · durable nonce</text>
+      <text x="0" y="60" fill="#e6edf3">Solana Attestation Service · Helium cNFTs · Relay aggregator</text>
     </g>
-    <text x="50" y="752" font-size="10" fill="#6e7681">MIT licensed · built for the Superteam Brasil × ZeroClaw bounty — Track C (DePIN &amp; the physical edge), the lane nobody else can build.</text>
+
+    <text x="80" y="792" font-size="10.5" fill="#6e7681">MIT licensed · built for the Superteam Brasil × ZeroClaw bounty — Track C (DePIN &amp; the physical edge), the lane nobody else can build.</text>
   </g>
 </svg>

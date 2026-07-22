@@ -8,7 +8,7 @@
 
 [![Track](https://img.shields.io/badge/Track-C_·_DePIN-6f42c1)](https://superteam.fun/earn/listing/zeroclaw)
 [![Custody](https://img.shields.io/badge/custody-T0_·_T1_·_T2-0969da)](#safety--custody)
-[![Tests](https://img.shields.io/badge/tests-200_host-brightgreen)](#code-quality)
+[![Tests](https://img.shields.io/badge/tests-207_host-brightgreen)](#code-quality)
 [![crates.io](https://img.shields.io/crates/v/palinurus-core?label=palinurus%20core&color=orange)](https://crates.io/crates/palinurus-core)
 [![devnet](https://img.shields.io/badge/devnet-T2_verified-brightgreen)](#live-on-devnet)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -46,7 +46,7 @@ A judge should be able to score each criterion without hunting. The body is orde
 |---|---:|---|---|
 | **Real utility** | 30% | `depin-rewards` = the daily-use plugin a stranger runs for months (no hardware, real Capybara alerts); `depin-attest` = reference impl **verified live on devnet**; `claim_tx` deferred honestly, not faked | [→ Real utility](#real-utility) |
 | **Safety & custody** | 25% | Full **T0 + T1 + T2** custody tiers; **4-vector fail-closed** prompt-injection transcripts (test-backed, both plugins); **no signing key anywhere** in `depin-rewards` (a test asserts it); devnet T2 guards enforced **before signing** | [→ Safety & custody](#safety--custody) |
-| **Code quality** | 20% | Pure-core / thin-shim split; **200 host tests** (71 core + 74 attest + 55 rewards); `palinurus-core` **published on crates.io**; TS oracle byte-for-byte cross-checks; `clippy -D warnings` + `wasm32-wasip2` clean (both crates, both modes) | [→ Code quality](#code-quality) |
+| **Code quality** | 20% | Pure-core / thin-shim split; **207 host tests** (71 core + 78 attest + 58 rewards); `palinurus-core` **published on crates.io**; TS oracle byte-for-byte cross-checks; `clippy -D warnings` + `wasm32-wasip2` clean (both crates, both modes) | [→ Code quality](#code-quality) |
 | **Merge-readiness** | 15% | Matches `redact-text` layout; minimal permissions (`http_client` + `config_read`); v0.1.0 semver, kebab names; **both WIT shims wired** (incl. the `depin-rewards` `execute()` dispatch fix — was a stub, now routes to the pure core + `WakiHttp`); crates.io dep (no fork URL) | [→ Merge-readiness](#merge-readiness) |
 | **Demo & docs** | 10% | 3 screenshots (explorer tx + terminal T2 + marketing site); wiring diagram (SVG); recording guide + chunk-by-chunk walkthrough; **live marketing site**; one-command demo drivers | [→ Demo & docs](#demo--docs) |
 
@@ -157,9 +157,9 @@ The `depin-attest` T2 custody path is **verified on Solana devnet** — a real, 
 | Crate | What | Tests | wasm | clippy |
 |---|---|---:|:---:|:---:|
 | `palinurus-core` | PDA derivation (hand-rolled `sha2` + `curve25519-dalek`), base58, borsh, versioned-tx, durable-nonce, JSON-RPC over `waki`, response shaping | **71** | ✅ | ✅ `-D warnings` |
-| `depin-attest` | Sensor reading → SAS/memo attestation, durable-nonce, T1+T2 custody | **74** (68 core + 6 demo) | ✅ | ✅ |
-| `depin-rewards` | Relay reads + Telegram alerts, T0/T1 custody, no signing key | **55** (52 core + 3 demo) | ✅ | ✅ |
-| | | **200** | | |
+| `depin-attest` | Sensor reading → SAS/memo attestation, durable-nonce, T1+T2 custody | **78** (72 core + 6 demo) | ✅ | ✅ |
+| `depin-rewards` | Relay reads + Telegram alerts, T0/T1 custody, no signing key | **58** (55 core + 3 demo) | ✅ | ✅ |
+| | | **207** | | |
 
 **Why hand-roll the substrate?** `solana-sdk` / `solana-program` can't compile inside a WIT component (syscall stubs). PDA derivation is rebuilt from `sha2` + `curve25519-dalek` and **cross-checked byte-for-byte against `solana_program` and `@solana/web3.js`** (TS oracles, host dev-deps) — the layout gotcha (`sha256(seeds ‖ bump ‖ program_id ‖ "ProgramDerivedAddress")`, bump as the last seed) was caught by the oracle, not guessed. Both plugins depend on the **published crates.io** core (`palinurus-core = "0.1"`) — no fork git URL for upstream reviewers.
 
@@ -229,7 +229,7 @@ Live at **[palinurus.rectorspace.com](https://palinurus.rectorspace.com)** — N
 
 ```bash
 rustup target add wasm32-wasip2
-cargo test                                  # 200 host tests, no wasm toolchain needed
+cargo test                                  # 207 host tests, no wasm toolchain needed
 cargo build --release --target wasm32-wasip2 # the core compiles to the component target
 cargo clippy --all-targets -- -D warnings    # zero warnings, both crates, both feature modes
 ```

@@ -53,8 +53,9 @@ Two beats, both on camera:
 
 ## F2 — X build-in-public (3–4 posts)
 
-> Post as a thread (1/4 → 4/4) OR spaced over a day. Each is ≤ 280 chars where possible
-> (X limit). The moat post (#3) is the one to pin.
+> **POSTED LIVE 2026-07-23** via getpipher/browser skill (account @RZ1989sol).
+> Thread root: https://x.com/RZ1989sol/status/2080165890998653114
+> Each post ≤280 x-counted chars (269 / 277 / 243 / 266). Tone: dev-humble, lowercase, analogy-led (night-guard + toddler-with-credit-card). Below is the live copy (trimmed from the original drafts for length).
 
 ### 1/4 — the problem
 

@@ -1,11 +1,10 @@
-# Palinurus — submission drafts (2026-07-23)
+# Palinurus — submission drafts (2026-07-23) — ✅ ALL SUBMITTED
 
-> Copy-paste-ready copy for the three remaining submission deliverables. All embed the
-> Vimeo demo URL + PR #138 + the mainnet proof sig. Edit tone freely before posting.
+> **Status 2026-07-23: F1 + F2 + Superteam submission all shipped.** See the bottom of this file for the exact submitted values. Copy below kept for the record.
 >
-> - **F1** = required bounty deliverable #2 — a showcase post in `#solana-bounty` (ZeroClaw Discord). Video ≤ 3 min.
-> - **F2** = 3–4 build-in-public X posts (merge-enablement + maintenance commitment).
-> - **One-pager** = optional Superteam submission attachment (drop the Vimeo + PR links in the form, attach this).
+> - **F1** ✅ = required bounty deliverable #2 — posted in ZeroClaw Discord `#solana-bounty` (msg `1529731030867771432`), all 3 links auto-embedded inline.
+> - **F2** ✅ = 4-post X thread — posted at `x.com/RZ1989sol/status/2080165890998653114`.
+> - **Superteam submission** ✅ = submitted at superteam.fun/earn/listing/zeroclaw (1 credit; editable until Aug 7).
 
 ---
 
@@ -165,7 +164,8 @@ cargo clippy --all-targets -- -D warnings    # zero warnings, both crates, both 
 ## Superteam Earn submission form fields (for the actual submit)
 
 - **Demo video link (Youtube/Vimeo/GDrive)** *(required):* `https://vimeo.com/1212224147`
-- **One-pager link** *(optional):* either paste the one-pager above into the submission body, or host it (e.g. push `docs/submission-drafts.md` to a gist / the repo and link the raw URL).
-- **PR / repo link** *(if the form asks for code):* `https://github.com/zeroclaw-labs/zeroclaw-plugins/pull/138` (the PR) or `https://github.com/RECTOR-LABS/palinurus` (the substrate repo).
+- **One-pager link** *(optional):* `https://palinurus.rectorspace.com` (the marketing site)
+- **Supporting material (GDrive/Docs/Socials)** *(required):* `https://github.com/RECTOR-LABS/palinurus` (the repo + full README/docs)
+- **Anything Else?** *(optional):* `Mainnet T2 proof (Finalized, Mainnet Beta): https://explorer.solana.com/tx/YZTS16nNNrDhLhFHCtSMhcYTYAkcYQvPn2QUWfWvkw4bJxif77d1Ww36o3c4LYe6r69NAzYNJLDpz93DjR3G9TC · palinurus-core v0.1.0 on crates.io — both plugins + core are maintained, not a hackathon one-shot.`
 
-**Deadline:** submit by **Aug 7 2026**; winner announced **Aug 21 2026**.
+**SUBMITTED 2026-07-23** via getpipher/browser skill. Confirmation: "Submit Now" → "✏️ Edit Submission" (40 total submissions, 14d:20h:31m remaining = deadline Aug 7). All 6 fields persisted (verified via Edit Submission). KYC checkbox was a custom styled control — had to click the LABEL not the hidden input (JS `input.click()` set `checked=true` but didn't toggle the React state, leaving Submit disabled). Cost: 1 credit. Winner announced **Aug 21 2026**.

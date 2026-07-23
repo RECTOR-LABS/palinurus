@@ -21,7 +21,9 @@
 
 ---
 
-## F1 — Discord `#solana-bounty` showcase post (required deliverable #2)
+## F1 — Discord `#solana-bounty` showcase post (required deliverable #2) — ✅ POSTED 2026-07-23
+
+> **LIVE:** discord.com/channels/1472154792351760419/1527427886410109029 · msg `1529731030867771432` (ZeroClaw `#solana-bounty`). All 3 links auto-embedded inline (Vimeo player + GitHub PR #138 card + Solana explorer tx). Pasted manually via RECTOR's desktop app — Discord's Slate editor rejected every programmatic insert (insertText/execCommand/synthetic-paste/CDP Cmd+A failed to sync Slate's model; browser draft froze + hid Send). Copy below = what was sent (1535 chars).
 
 > Paste below the video. Discord auto-embeds the Vimeo link as an inline player.
 > Keep it under ~15 lines — maintaineurs skim. Bold the two on-camera beats.

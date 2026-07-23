@@ -4,10 +4,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-const PR_URL = "https://github.com/zeroclaw-labs/zeroclaw-plugins/pull/76";
+const PR_URL = "https://github.com/zeroclaw-labs/zeroclaw-plugins/pull/138";
 const REPO_URL = "https://github.com/RECTOR-LABS/palinurus";
 const BOUNTY_URL = "https://superteam.fun/earn/listing/zeroclaw";
 const CORE_CRATES = "https://crates.io/crates/palinurus-core";
+const VIDEO_URL = "https://player.vimeo.com/video/1212224147";
 
 const facts = [
   { k: "212", v: "host tests, all green" },
@@ -56,7 +57,7 @@ export default function Home() {
             <a href="#plugins" className="hover:text-[color:var(--color-ink)] transition-colors">Plugins</a>
             <a href="#custody" className="hover:text-[color:var(--color-ink)] transition-colors">Custody</a>
             <a href={REPO_URL} className="hover:text-[color:var(--color-ink)] transition-colors" target="_blank" rel="noreferrer">GitHub</a>
-            <a href={PR_URL} className="rounded-md sol-gradient-bg px-3 py-1.5 font-medium text-black hover:opacity-90 transition-opacity" target="_blank" rel="noreferrer">PR #76</a>
+            <a href={PR_URL} className="rounded-md sol-gradient-bg px-3 py-1.5 font-medium text-black hover:opacity-90 transition-opacity" target="_blank" rel="noreferrer">PR #138</a>
           </div>
         </div>
       </nav>
@@ -191,15 +192,25 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-5 py-20 text-center">
           <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">See it run</h2>
           <p className="mx-auto mt-4 max-w-2xl text-[color:var(--color-ink-muted)]">
-            The demo watches a real public Helium hotspot — <span className="font-mono text-[color:var(--color-ink)]">Fit Pine Capybara</span> — that earned 0.02 HNT then went offline. The watch action fires a real Telegram alert to a real phone. No mock, no slide deck.
+            2:03 of the real pipeline end-to-end — the agent reads a public Helium hotspot, fires a Telegram alert the moment it goes dark, then signs and submits a real T2 attestation <span className="text-[color:var(--color-ink)]">Finalized on Solana mainnet</span>, on camera. No mock, no slide deck, no devnet play-money.
           </p>
-          <div className="mx-auto mt-10 max-w-2xl overflow-hidden rounded-2xl border hairline bg-[color:var(--color-bg)] p-10">
-            <div className="font-mono text-sm text-[color:var(--color-ink-faint)]">demo video — recording now</div>
-            <div className="mt-3 font-semibold text-[color:var(--color-ink)]">≤ 3 minutes · real agent · real Telegram · real Solana</div>
-            <p className="mt-2 text-sm text-[color:var(--color-ink-muted)]">
-              The full recording guide lives at{" "}
-              <a href={`${REPO_URL}/blob/main/docs/demo-recording-guide.md`} className="text-[color:var(--color-ink)] underline underline-offset-4" target="_blank" rel="noreferrer">docs/demo-recording-guide.md</a>.
-            </p>
+          <div className="mx-auto mt-10 max-w-3xl">
+            <div className="relative aspect-video overflow-hidden rounded-2xl border hairline bg-black shadow-2xl">
+              <iframe
+                src={`${VIDEO_URL}?byline=0&title=0&portrait=0`}
+                className="absolute inset-0 h-full w-full"
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                title="Palinurus — On-chain T2 attestation for ZeroClaw DePIN plugins (Solana)"
+                allowFullScreen
+              />
+            </div>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm text-[color:var(--color-ink-muted)]">
+              <span className="font-mono text-[color:var(--color-ink-faint)]">2:03 · 1080p</span>
+              <span className="text-[color:var(--color-ink-faint)]">·</span>
+              <a href={`${REPO_URL}/blob/main/docs/demo-recording-guide.md`} className="text-[color:var(--color-ink)] underline underline-offset-4" target="_blank" rel="noreferrer">recording guide</a>
+              <span className="text-[color:var(--color-ink-faint)]">·</span>
+              <a href={PR_URL} className="text-[color:var(--color-ink)] underline underline-offset-4" target="_blank" rel="noreferrer">PR #138</a>
+            </div>
           </div>
         </div>
       </section>
@@ -214,7 +225,7 @@ export default function Home() {
           <div className="flex items-center gap-5">
             <a href={REPO_URL} className="hover:text-[color:var(--color-ink)]" target="_blank" rel="noreferrer">GitHub</a>
             <a href={CORE_CRATES} className="hover:text-[color:var(--color-ink)]" target="_blank" rel="noreferrer">crates.io</a>
-            <a href={PR_URL} className="hover:text-[color:var(--color-ink)]" target="_blank" rel="noreferrer">PR #76</a>
+            <a href={PR_URL} className="hover:text-[color:var(--color-ink)]" target="_blank" rel="noreferrer">PR #138</a>
             <a href={BOUNTY_URL} className="hover:text-[color:var(--color-ink)]" target="_blank" rel="noreferrer">Superteam</a>
           </div>
         </div>

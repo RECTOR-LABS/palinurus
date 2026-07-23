@@ -107,6 +107,34 @@ export default function Home() {
         </div>
       </header>
 
+      {/* ───────── demo + cta ───────── */}
+      <section id="demo" className="border-t hairline bg-[color:var(--color-bg-soft)]">
+        <div className="mx-auto max-w-6xl px-5 py-20 text-center">
+          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">See it run</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-[color:var(--color-ink-muted)]">
+            2:03 of the real pipeline end-to-end — the agent reads a public Helium hotspot, fires a Telegram alert the moment it goes dark, then signs and submits a real T2 attestation <span className="text-[color:var(--color-ink)]">Finalized on Solana mainnet</span>, on camera. No mock, no slide deck, no devnet play-money.
+          </p>
+          <div className="mx-auto mt-10 max-w-3xl">
+            <div className="relative aspect-video overflow-hidden rounded-2xl border hairline bg-black shadow-2xl">
+              <iframe
+                src={`${VIDEO_URL}?byline=0&title=0&portrait=0`}
+                className="absolute inset-0 h-full w-full"
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                title="Palinurus — On-chain T2 attestation for ZeroClaw DePIN plugins (Solana)"
+                allowFullScreen
+              />
+            </div>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm text-[color:var(--color-ink-muted)]">
+              <span className="font-mono text-[color:var(--color-ink-faint)]">2:03 · 1080p</span>
+              <span className="text-[color:var(--color-ink-faint)]">·</span>
+              <a href={`${REPO_URL}/blob/main/docs/demo-recording-guide.md`} className="text-[color:var(--color-ink)] underline underline-offset-4" target="_blank" rel="noreferrer">recording guide</a>
+              <span className="text-[color:var(--color-ink-faint)]">·</span>
+              <a href={PR_URL} className="text-[color:var(--color-ink)] underline underline-offset-4" target="_blank" rel="noreferrer">PR #138</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ───────── wiring ───────── */}
       <section id="wiring" className="border-t hairline">
         <div className="mx-auto max-w-6xl px-5 py-20">
@@ -182,34 +210,6 @@ export default function Home() {
               <p className="px-1 text-xs text-[color:var(--color-ink-faint)]">
                 Claim moves value ⇒ depin-rewards stays T0/T1 (multisig). T2 is attestation-only — blast radius = fake attestations, not theft.
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ───────── demo + cta ───────── */}
-      <section id="demo" className="border-t hairline bg-[color:var(--color-bg-soft)]">
-        <div className="mx-auto max-w-6xl px-5 py-20 text-center">
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">See it run</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-[color:var(--color-ink-muted)]">
-            2:03 of the real pipeline end-to-end — the agent reads a public Helium hotspot, fires a Telegram alert the moment it goes dark, then signs and submits a real T2 attestation <span className="text-[color:var(--color-ink)]">Finalized on Solana mainnet</span>, on camera. No mock, no slide deck, no devnet play-money.
-          </p>
-          <div className="mx-auto mt-10 max-w-3xl">
-            <div className="relative aspect-video overflow-hidden rounded-2xl border hairline bg-black shadow-2xl">
-              <iframe
-                src={`${VIDEO_URL}?byline=0&title=0&portrait=0`}
-                className="absolute inset-0 h-full w-full"
-                allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-                title="Palinurus — On-chain T2 attestation for ZeroClaw DePIN plugins (Solana)"
-                allowFullScreen
-              />
-            </div>
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm text-[color:var(--color-ink-muted)]">
-              <span className="font-mono text-[color:var(--color-ink-faint)]">2:03 · 1080p</span>
-              <span className="text-[color:var(--color-ink-faint)]">·</span>
-              <a href={`${REPO_URL}/blob/main/docs/demo-recording-guide.md`} className="text-[color:var(--color-ink)] underline underline-offset-4" target="_blank" rel="noreferrer">recording guide</a>
-              <span className="text-[color:var(--color-ink-faint)]">·</span>
-              <a href={PR_URL} className="text-[color:var(--color-ink)] underline underline-offset-4" target="_blank" rel="noreferrer">PR #138</a>
             </div>
           </div>
         </div>
